@@ -5,10 +5,12 @@ TARGET = ppi
 TEMPLATE = app
 SOURCES += src/mainwidget.cpp \
     src/main.cpp \
-    src/frmppi.cpp
+    src/frmppi.cpp \
+    src/datapool.cpp
 HEADERS += src/mainwidget.h \
     src/frmppi.h \
-    src/def.h
+    src/def.h \
+    src/datapool.h
 FORMS += ui/mainwidget.ui
 OBJECTS_DIR = tmp
 MOC_DIR = tmp

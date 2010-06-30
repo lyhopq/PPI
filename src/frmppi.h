@@ -49,7 +49,7 @@ class FrmPPI: public QFrame
         QPoint origin() const { return org; };
 
         /*!
-        *    得到当前 PPI 量程
+        *    \brief 得到当前 PPI 量程
         *    \sa setRange()
         */
         int range() const { return _range; };
@@ -67,7 +67,7 @@ class FrmPPI: public QFrame
 
     signals:
         /*!
-        *    发出警告信号
+        *    \brief 发出警告信号
         *
         *    \param b true (有警告) or false (无警告)
         */
