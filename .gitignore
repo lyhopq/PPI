@@ -1,0 +1,8 @@
+*.pro.user
+Makefile*
+*~
+tmp
+build
+date
+doc
+ppi
