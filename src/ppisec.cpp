@@ -7,6 +7,9 @@
 
 extern sysValue *sysval;
 
+/*!
+*    \brief 构造函数
+*/
 PPISec::PPISec( PPIPainter *p )
 {
     painter = p;
@@ -21,6 +24,8 @@ PPISec::PPISec( PPIPainter *p )
     secTimer->setSingleShot(false);
     secTimer->start(1000); // 2s
 }
+
+//! 析构函数
 PPISec::~PPISec()
 {
     //if(pSectorRegion!=NULL) delete pSectorRegion;
@@ -38,7 +43,7 @@ PPISec::~PPISec()
 */
 void PPISec::draw()
 {
-    qDebug("dispInfo->centerX=%d,dispInfo->centerY=%d,dispInfo->radiusPPI=%d\n",dispInfo->centerX,dispInfo->centerY,dispInfo->radiusPPI);
+    //qDebug("dispInfo->centerX=%d,dispInfo->centerY=%d,dispInfo->radiusPPI=%d\n",dispInfo->centerX,dispInfo->centerY,dispInfo->radiusPPI);
 
     painter->setColor(FB_GREEN);
     painter->drawDistantCircle(dispInfo->centerX,dispInfo->centerY);
@@ -493,5 +498,3 @@ void CPPISec::drawHead(int azi)
     painter->setColor(color);
 }
 */
-
-

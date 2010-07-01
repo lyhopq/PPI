@@ -2,6 +2,13 @@
 
 #include <QDebug>
 
+/*!
+*    \brief 构造函数
+*
+*    \param dp DataPool 指针
+*
+*    加载数据表指针，初始化数字码
+*/
 PPIPainter::PPIPainter( DataPool *dp )
 {
     m_dp = dp;
@@ -15,8 +22,8 @@ PPIPainter::PPIPainter( DataPool *dp )
 
     distantCircleCount = 1;
 
-    chartAddrX = NULL;
-    chartAddrY = NULL;
+    //chartAddrX = NULL;
+    //chartAddrY = NULL;
     chartScaleX = NULL;
     chartScaleY = NULL;
     radiusPPI = PPI_R/2;
@@ -27,22 +34,6 @@ PPIPainter::PPIPainter( DataPool *dp )
     color = FB_GREEN;
     //getAddrXY(1024);
     getScaleCircle();
-
-    dot[10][0] = 0x0e;
-    dot[10][1] = 0x1f;
-    dot[10][2] = 0x1f;
-    dot[10][3] = 0x1f;
-    dot[10][4] = 0x0e;
-
-    dot[10][0] = 0x00;
-    dot[10][1] = 0x0e;
-    dot[10][2] = 0x0e;
-    dot[10][3] = 0x0e;
-    dot[10][4] = 0x00;
-
-    dot[10][5] = 0x00;
-    dot[10][6] = 0x00;
-    dot[10][7] = 0x00;
 
     int i=0;//0
     dot[i][0] = 0x00;dot[i][1] = 0x00;dot[i][2] = 0x00;dot[i][3] = 0x3c;
@@ -96,10 +87,16 @@ PPIPainter::PPIPainter( DataPool *dp )
     dot[i][12] = 0x38;dot[i][13] = 0x00;dot[i][14] = 0x00;dot[i][15] = 0x00;
 }
 
+/*!
+*    \brief 析构函数
+*
+*    删除所申请的内存
+*/
 PPIPainter::~PPIPainter()
 {
     int i;
 
+    /*
     for(i=0;i<AZI_NUM;i++)
           delete[] chartAddrX[i];
     if(chartAddrX!=NULL) delete[] chartAddrX;
@@ -107,6 +104,7 @@ PPIPainter::~PPIPainter()
     for(i=0;i<AZI_NUM;i++)
           delete[] chartAddrY[i];
     if(chartAddrY!=NULL) delete[] chartAddrY;
+    */
 
     for(i=0; i<90+1;i++)
     {
@@ -119,14 +117,25 @@ PPIPainter::~PPIPainter()
 
 }
 
+/*
 bool PPIPainter::isValid( int x, int y )
 {
     return (x>=0) && (x<FB_WIDTH) && (y>=0) && (y<FB_HEIGHT);
 }
+*/
 
+/*!
+*    \brief 画点
+*
+*    \param x 屏幕x坐标
+*    \param y 屏幕y坐标
+*    \param color 颜色
+*
+*    在屏幕像素点 (x,y) 处画点，颜色为 color
+*/
 void PPIPainter::setPixel(int x, int y, FB_COLORTYPE color)
 {
-    if( isValid( x, y ) )
+    //if( isValid( x, y ) )
     {
         if(color != FB_CLEAR)
         {
@@ -147,6 +156,17 @@ void PPIPainter::setPixel(int x, int y, FB_COLORTYPE color)
     }
 }
 
+/*!
+*    \brief 画矩形
+*
+*    \param letf 左上角x坐标
+*    \param up 左上角y坐标
+*    \param right 右下角x坐标
+*    \param dowm 右下角y坐标
+*    \param color 颜色
+*
+*    在屏幕上画矩形，左上角坐标为 (left, up)，右下角坐标为 (right, down)。颜色为 color。
+*/
 void PPIPainter::drawRect(int left, int up, int right, int down, FB_COLORTYPE color)
 {
     for(int y=up;y>down;y--)
@@ -172,7 +192,15 @@ void PPIPainter::drawLine(int x,int y,int angle,int len)
 }
 */
 
-//画坐标十字线
+/*!
+*    \brief 画坐标十字坐标
+*
+*    \param x 坐标中心x值
+*    \param y 坐标中心y值
+*    \param r 十字坐标半径
+*
+*    在屏幕 (x,y) 处画十字坐标，半径为r。
+*/
 void PPIPainter::drawCrossLine(int x,int y,int r)
 {
     for(int i=-r;i<r;i++)
@@ -182,7 +210,9 @@ void PPIPainter::drawCrossLine(int x,int y,int r)
     }
 }
 
-//画阿拉伯数字 0～9
+/*!
+*    画阿拉伯数字 0～9
+*/
 void PPIPainter::drawPoint(int x,int y,int code)
 {
     int i=0,j;
@@ -219,7 +249,17 @@ void PPIPainter::drawPoint(int x,int y,int code)
     }
 }
 
-//画数字
+/*!
+*    \brief 在屏幕上画数字
+*
+*    \param x x坐标
+*    \param y y坐标
+*    \param num 数字
+*
+*    在屏幕 (x,y) 处画数字 num
+*
+*    \warning 数字位数不能超过 10 位。
+*/
 void PPIPainter::drawNum(int x,int y,int num)
 {
     int i=0,j=0;
@@ -235,15 +275,22 @@ void PPIPainter::drawNum(int x,int y,int num)
         drawPoint(x + (i-j)*8,y,n[j]);
 }
 
-//画园
-//采用查表的方法速度提高
+/*!
+*    \brief 画园
+*
+*    \param x    圆心x坐标
+*    \param y    圆心y坐标
+*    \param r    半径
+*
+*    在屏幕上以 (x,y) 为圆心，r为半径画圆。采用查表的方法速度提高。
+*/
 void PPIPainter::drawCircle(int x,int y,int r)
 {
     int px,py;
     int ** pnx = nx;
     int ** pny = ny;
     //int scale = 1024;//11.378=360.0*4096.0;
-    int scale = 512;//11.378=360.0*4096.0;
+    int scale = 1024;//11.378=360.0*4096.0;
     if(r > 512)
     {
         pnx = fy;
@@ -251,9 +298,8 @@ void PPIPainter::drawCircle(int x,int y,int r)
         scale = 2048;
     }
 
-    qDebug("x=%d,y=%d,r=%d,scale=%d\n",x,y,r,scale);
     int angle=0;
-    for(angle=0;angle<scale;angle++)
+    for(angle=0;angle<scale;angle++) // 根据圆的对称型，减少循环次数
     {
         px = pnx[angle][r-1];
         py = pny[angle][r-1];
@@ -267,11 +313,18 @@ void PPIPainter::drawCircle(int x,int y,int r)
         setPixel(x-py,y+px,color);
         setPixel(x-py,y-px,color);
     }
-
 }
 
 
-// 画距离圈
+/*!
+*    \brief 画距离圈
+*
+*    \param x    圆心x坐标
+*    \param y    圆心y坐标
+*
+*    在屏幕上以 (x,y) 为圆心画距离圈。距离圈的个数取决于 \a distantCircleCount。
+*    平且在距离圈上标注该距离圈所表示的距离(km)。
+*/
 void PPIPainter::drawDistantCircle(int x,int y)
 {
     int px,py;
@@ -340,7 +393,7 @@ void PPIPainter::getAddrXY(int radius)
 }
 */
 
-//计算画刻度线的数据
+//! 计算画刻度线的数据
 void PPIPainter::getScaleCircle()
 {
     int i=0,j=0;
@@ -358,7 +411,7 @@ void PPIPainter::getScaleCircle()
     int angle=0;
     int ** pnx = nx;
     int ** pny = ny;
-    double scale = 11.378;//11.378=360.0*4096.0;
+    double scale = 11.378;//11.378*360.0=4096.0;
     if(radiusPPI > 512)
     {
         pnx = fy;
@@ -374,12 +427,19 @@ void PPIPainter::getScaleCircle()
             chartScaleX[angle][j] = pnx[a][radiusPPI -j];
             chartScaleY[angle][j] = pny[a][radiusPPI -j];
         }
-        chartScaleX[angle][j] = pnx[a][radiusPPI -24];
+        chartScaleX[angle][j] = pnx[a][radiusPPI -24]; // 刻度值的起始坐标
         chartScaleY[angle][j] = pny[a][radiusPPI -24];
     }
 }
 
-//画刻度线
+/*!
+*    \brief 画刻度
+*
+*    \param x    圆心x坐标
+*    \param y    圆心y坐标
+*
+*    画极坐标的刻度，并标上角度。
+*/
 void PPIPainter::drawScale(int x,int y)
 {
     int px,py,i,j,len,shift;
@@ -417,6 +477,7 @@ void PPIPainter::drawScale(int x,int y)
     }
 }
 
+/*
 //画航迹点
 void PPIPainter::drawTrackDot(int x,int y)
  {
@@ -436,6 +497,7 @@ void PPIPainter::drawTrackDot(int x,int y)
         }
     }
  }
+ */
 
 /*
 void PPIPainter::drawPlane(int x,int y,int angle,int batchNum)

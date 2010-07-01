@@ -5,7 +5,7 @@
 /*!
 *    \brief 构造函数
 *
-*    初始化
+*    从文件中加载数据，并初始化 FrameBuffer 设备。
 */
 DataPool::DataPool()
 {

@@ -17,7 +17,7 @@ public:
     PPIPainter( DataPool *dp );
     ~PPIPainter();
 
-    inline bool isValid( int x, int y );
+    //inline bool isValid( int x, int y );
     inline void setPixel(int x, int y, FB_COLORTYPE color);
 
     void drawRect(int left, int up, int right, int down, FB_COLORTYPE color);
@@ -27,14 +27,12 @@ public:
     ///////////////////////////////////
     void drawCircle(int x,int y,int r);
     void drawDistantCircle(int x,int y);
-    void drawPoint(int x,int y,int code);
     void drawNum(int x,int y,int num);
     void drawScale(int x,int y);
     void drawCrossLine(int x,int y,int r);
-    void getScaleCircle();
     void getDistantCircle();
     //void drawLine(int x,int y,int angle,int len);
-    void drawTrackDot(int x,int y);
+    //void drawTrackDot(int x,int y);
     //void drawPlane(int x,int y,int angle,int batchNum);
     //void drawSectorRegion(int centerX,int centerY,int r1,int degree1,int r2,int degree2);
     //void drawSectorRegion(int centerX,int centerY,int r1,int degree1,int r2,int degree2,int idNum);
@@ -56,14 +54,17 @@ private:
 
     FB_COLORTYPE color;
     int **chartScaleX,**chartScaleY;
-    int **chartAddrX,**chartAddrY;
+    //int **chartAddrX,**chartAddrY;
     int **chartCircle;
     int radiusPPI;
     int rangePPI;//量程
     int textTransFlag;
     int distantCircleCount;
     int centerX,centerY;
-    char dot[12][16];//
+    char dot[10][16];//
+
+    void drawPoint(int x,int y,int code);
+    void getScaleCircle();
 };
 
 #endif

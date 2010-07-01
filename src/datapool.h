@@ -70,11 +70,11 @@ private:
 
     int initDataTable();
     int initFbDev();
-    int initFbLayer();
+    //int initFbLayer();
 
     void freeDataTable();
     void freeFbDev();
-    void freeFbLayer();
+    //void freeFbLayer();
 };
 
 #endif // DATEPOOL_H

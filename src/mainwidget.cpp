@@ -5,6 +5,8 @@
 
 #include "sysvalue.h"
 
+#include <QDebug>
+
 // 全局变量
 sysValue *sysval;
 
@@ -14,7 +16,7 @@ MainWidget::MainWidget(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    frameppi = new FrmPPI;
+    frameppi = new FrmPPI(this);
 
     QHBoxLayout *layout = (QHBoxLayout *)this->layout();
     layout->addWidget(frameppi);
@@ -28,11 +30,12 @@ MainWidget::MainWidget(QWidget *parent) :
 
 MainWidget::~MainWidget()
 {
-    delete ui;
     delete sysval;
     delete dp;
     delete painter;
     delete ppisec;
+
+    delete ui;
 }
 
 void MainWidget::changeEvent(QEvent *e)

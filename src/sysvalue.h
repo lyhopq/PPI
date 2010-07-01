@@ -3,6 +3,12 @@
 
 #include <stdio.h>
 
+/*!
+*    \struct PPIDispInfo
+*    \brief PPI 显示参数
+*
+*    集合了 PPI 的显示参数
+*/
 typedef struct PPIDispInfo
 {
     int centerX;                    //坐标中心
@@ -21,6 +27,7 @@ typedef struct PPIDispInfo
     unsigned char bit_cjb;          //采集板自检
 };
 
+/*
 //BCD码格式
 typedef struct systemBCDTime
 {
@@ -40,7 +47,16 @@ typedef struct systemTime_struct
     unsigned long tv_ms;            //毫秒ms
     systemBCDTime tv_bcd;           //BCD码时间
 };
+*/
 
+/*!
+*    \struct systemVarDef
+*    \brief 系统参数
+*
+*    集合了系统参数。包括 PPI 显示信息 \a dispInfo。
+*
+*    \sa PPIDispInfo
+*/
 typedef struct systemVarDef{
     unsigned long fs_time;          // 累积发射时间
     unsigned char shiPinWaChu_flag; //视频挖除标志
@@ -76,6 +92,7 @@ class sysValue
 {
 public:
     sysValue();
+    ~sysValue();
 
     //unsigned long getFSTime();
     //void setFSTime(unsigned long fstime);

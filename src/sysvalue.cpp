@@ -4,6 +4,8 @@
 #include "sysvalue.h"
 #include "def.h"
 
+#include <QDebug>
+
 FILE *timefp = NULL;
 
 /*!
@@ -15,14 +17,17 @@ sysValue::sysValue()
 {
     memset((void *)&sysVar,0,sizeof(struct systemVarDef));
 
-    FILE *fp = NULL;
-    //if((fp = fopen("./data/sysvalue.dat","w")) != NULL) // 文件存在
+    fp = NULL;
+    if((fp = fopen("./data/sysvalue.dat","r+")) != NULL) // 文件存在
     {
-      //  fread((void *)&sysVar,sizeof(struct systemVarDef),1,fp);
+        fread((void *)&sysVar,sizeof(struct systemVarDef),1,fp);
     }
-    //else    //只有在文件不存在时,设置初始化值
+    else    //只有在文件不存在时,设置初始化值
     {
-      //  printf("\ncan't open sysvalue.dat file!\n");
+        printf("\sysvalue.dat not exist!\n");
+
+
+        fp = fopen("./data/sysvalue.dat","w");
 
         //设置默认参数
         sysVar.fs_time = 0;
@@ -63,6 +68,15 @@ sysValue::sysValue()
         sysVar.netcmd_ldkz = 1; //开机默认为允许发射
         sysVar.code_ldzt = 1;   //雷达自检总状态,1为正常
 
+    }
+}
+
+sysValue::~sysValue()
+{
+    if(fp != NULL)
+    {
+        saveSystemValue();
+        fclose(fp);
     }
 }
 
