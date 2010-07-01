@@ -3,6 +3,8 @@ Makefile*
 *~
 tmp
 build
-date
+tool
+test
+data
 doc
 ppi

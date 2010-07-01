@@ -3,6 +3,10 @@
 #include "mainwidget.h"
 #include "ui_mainwidget.h"
 
+#include "sysvalue.h"
+
+// 全局变量
+sysValue *sysval;
 
 MainWidget::MainWidget(QWidget *parent) :
     QWidget(parent),
@@ -14,11 +18,21 @@ MainWidget::MainWidget(QWidget *parent) :
 
     QHBoxLayout *layout = (QHBoxLayout *)this->layout();
     layout->addWidget(frameppi);
+
+
+    sysval  = new sysValue;
+    dp      = new DataPool;
+    painter = new PPIPainter(dp);
+    ppisec  = new PPISec(painter);
 }
 
 MainWidget::~MainWidget()
 {
     delete ui;
+    delete sysval;
+    delete dp;
+    delete painter;
+    delete ppisec;
 }
 
 void MainWidget::changeEvent(QEvent *e)

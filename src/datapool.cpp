@@ -76,6 +76,7 @@ int DataPool::initDataTable()
         addr_near_y[i] = new int[ADDR_NEAR_SMP_LEN];
     }
 
+    /*
     //远区
     addr_far_x = new int*[ADDR_FAR_AZI_LEN];
     addr_far_y = new int*[ADDR_FAR_AZI_LEN];
@@ -84,6 +85,7 @@ int DataPool::initDataTable()
         addr_far_x[i] = new int[ADDR_FAR_SMP_LEN];
         addr_far_y[i] = new int[ADDR_FAR_SMP_LEN];
     }
+    */
 
     /*
     //余辉随机数表
@@ -100,9 +102,9 @@ int DataPool::initDataTable()
     FILE *fp;
 
     //近区初始化
-    if( (fp=fopen("./dat/Rad_4096_512_xb","r"))==NULL )
+    if( (fp=fopen("./data/Rad_4096_512_xb","r"))==NULL )
     {
-        printf("read ./dat/Rad_4096_512_xb error!\n");
+        printf("read ./data/Rad_4096_512_xb error!\n");
         return -1;
     }
     else
@@ -112,9 +114,9 @@ int DataPool::initDataTable()
         fclose(fp);
     }
 
-    if( (fp=fopen("./dat/Rad_4096_512_yb","r"))==NULL )
+    if( (fp=fopen("./data/Rad_4096_512_yb","r"))==NULL )
     {
-        printf("read ./dat/Rad_4096_512_yb error!\n");
+        printf("read ./data/Rad_4096_512_yb error!\n");
         return -1;
     }
     else
@@ -124,10 +126,11 @@ int DataPool::initDataTable()
         fclose(fp);
     }
 
+    /*
     //远区初始化
-    if( (fp=fopen("./dat/Rad_8192_512_xb","r"))==NULL )
+    if( (fp=fopen("./data/Rad_8192_512_xb","r"))==NULL )
     {
-        printf("read ./dat/Rad_8192_512_xb error!\n");
+        printf("read ./data/Rad_8192_512_xb error!\n");
         return -1;
     }
     else
@@ -137,9 +140,9 @@ int DataPool::initDataTable()
         fclose(fp);
     }
 
-    if( (fp=fopen("./dat/Rad_8192_512_yb","r"))==NULL )
+    if( (fp=fopen("./data/Rad_8192_512_yb","r"))==NULL )
     {
-        printf("read ./dat/Rad_8192_512_yb error!\n");
+        printf("read ./data/Rad_8192_512_yb error!\n");
         return -1;
     }
     else
@@ -148,6 +151,7 @@ int DataPool::initDataTable()
             fread(addr_far_y[i],sizeof(int),ADDR_FAR_SMP_LEN,fp);
         fclose(fp);
     }
+    */
 
     /*
     //余辉初始化
@@ -198,6 +202,7 @@ void DataPool::freeDataTable()
     //delete[] randomy;
     //delete[] randomx;
 
+    /*
     for( int i=0; i<ADDR_FAR_AZI_LEN; i++ )
     {
         delete[] addr_far_x[i];
@@ -205,6 +210,7 @@ void DataPool::freeDataTable()
     }
     delete[] addr_far_x;
     delete[] addr_far_y;
+    */
 
     for( int i=0; i<ADDR_NEAR_AZI_LEN; i++ )
     {
@@ -259,10 +265,17 @@ int DataPool::initFbDev()
 
     //从一维线性地址中分离出需要作图的区域,转换为二维地址空间
     //要注意这样映射后,fbp[x][y]在屏幕系奈恢盟轿獃,竖直为x
+    /*
     fbp = new FB_COLORTYPE*[PPI_R];
     for( int i=0; i<PPI_R; i++ )
     {
         fbp[i] = (FB_COLORTYPE *)(fbplinear+(FB_XSTART+(FB_YSTART+i)*vinfo.xres)*bytes_per_pixel);
+    }
+    */
+    fbp = new FB_COLORTYPE*[vinfo.yres];
+    for( int i=0; i<vinfo.yres; i++ )
+    {
+        fbp[i] = (FB_COLORTYPE *)(fbplinear+i*vinfo.xres*bytes_per_pixel);
     }
     return 0;
 }

@@ -5,6 +5,8 @@
 
 
 #include "frmppi.h"
+#include "ppipainter.h"
+#include "ppisec.h"
 
 namespace Ui {
     class MainWidget;
@@ -23,6 +25,10 @@ private:
     Ui::MainWidget *ui;
 
     FrmPPI *frameppi;
+
+    DataPool *dp;
+    PPIPainter *painter;
+    PPISec     *ppisec;
 };
 
 #endif // MAINWIDGET_H

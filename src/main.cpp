@@ -15,8 +15,6 @@ int main(int argc, char *argv[])
     {
         a.setStyleSheet(qss.readAll());
         qss.close();
-
-        qDebug() << "set styleSheet";
     }
 
     MainWidget w;
