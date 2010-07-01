@@ -56,7 +56,7 @@ private:
 
     FB_COLORTYPE color;
     int **chartScaleX,**chartScaleY;
-    int **chartAddrX,**chartAddrY;
+    //int **chartAddrX,**chartAddrY;
     int **chartCircle;
     int radiusPPI;
     int rangePPI;//量程

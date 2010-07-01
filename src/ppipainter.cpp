@@ -15,8 +15,8 @@ PPIPainter::PPIPainter( DataPool *dp )
 
     distantCircleCount = 1;
 
-    chartAddrX = NULL;
-    chartAddrY = NULL;
+    //chartAddrX = NULL;
+    //chartAddrY = NULL;
     chartScaleX = NULL;
     chartScaleY = NULL;
     radiusPPI = PPI_R/2;
@@ -100,6 +100,7 @@ PPIPainter::~PPIPainter()
 {
     int i;
 
+    /*
     for(i=0;i<AZI_NUM;i++)
           delete[] chartAddrX[i];
     if(chartAddrX!=NULL) delete[] chartAddrX;
@@ -107,6 +108,7 @@ PPIPainter::~PPIPainter()
     for(i=0;i<AZI_NUM;i++)
           delete[] chartAddrY[i];
     if(chartAddrY!=NULL) delete[] chartAddrY;
+    */
 
     for(i=0; i<90+1;i++)
     {
