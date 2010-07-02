@@ -1,7 +1,7 @@
 *.pro.user
 Makefile*
 *~
-*.swap
+*.swp
 tmp
 build
 tool
@@ -9,4 +9,4 @@ test
 data
 doc
 ppi
-src/*.swap
+src/*.swp

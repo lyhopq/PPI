@@ -12,6 +12,10 @@ namespace Ui {
     class MainWidget;
 }
 
+/*!
+*    \class MainWidget
+*    \brief 程序主界面
+*/
 class MainWidget : public QWidget {
     Q_OBJECT
 public:

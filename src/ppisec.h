@@ -15,11 +15,11 @@
 
 
 /*!
-*    \class PPIsec
-*    \brief 调用 PPIPainter 画 PPI 刻度、距离圈等等。并且绘制二次信息。
+*    \class PPISec
+*    \brief 绘制二次信息
 *
+*    调用 PPIPainter 画 PPI 刻度、距离圈等等。并且绘制二次信息。
 */
-
 class PPISec : public QObject
 {
     Q_OBJECT
