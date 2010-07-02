@@ -43,4 +43,10 @@ const int ADDR_FAR_SMP_LEN=SAMPLE_NUM/2;//PPI显示偏心时的一根视频显�
 
 const int RND_LEN=1000*1000;//余辉随机数表的长度,等于作图区域的分辨率
 
+// 视频数据 (10 bits)
+typedef unsigned short VIDEODATATYPE;
+const int VIDEODATADEPTH = 10;
+const int VIDEODATAMASK = 0x3ff;    // 10bits
+const double VIDEODATALEN = 1024.0;
+
 #endif // DEF_H

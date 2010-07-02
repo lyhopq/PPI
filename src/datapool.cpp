@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include "datapool.h"
 
 /*!
@@ -24,7 +25,6 @@ DataPool::DataPool()
     }
 
     //init frame buffer layer
-    /*
     if(initFbLayer()!=0)//初始化fb控制层
     {
         printf("init frame buffer layer error\n");
@@ -32,6 +32,7 @@ DataPool::DataPool()
     }
 
 
+    /*
     //用于解析时标和视频信息的数据结构和变量
     aziBuf = new s_ppi_azi[maxazisize];
     MEMALLOCCHECK(aziBuf)//where is this macro defined??-->defined in "debug.h" --> #define MEMALLOCCHECK(p) if(p == NULL){ printf("allocate mem failed and 												exit\n"); exit(0); }
@@ -291,29 +292,25 @@ void DataPool::freeFbDev()
     delete[] fbp;
 }
 
-/*
+//! 初始化 fblayer
 int DataPool::initFbLayer()//初始化fblayer
 {
-    layer = new s_layer_unit*[MFB_HEIGHT];//defined in "ppidef.h"
-    MEMALLOCCHECK(layer)
+    layer = new s_layer_unit*[FB_HEIGHT];//defined in "def.h"
 
-    for( int i=0; i<MFB_HEIGHT; i++ )//fbp转化后y与x交换，所以这里也交换
+    for( int i=0; i<FB_HEIGHT; i++ )//fbp转化后y与x交换，所以这里也交换
     {
-        layer[i] = new s_layer_unit[MFB_WIDTH];
-        MEMALLOCCHECK(layer[i])
-        memset(layer[i],0,MFB_WIDTH*sizeof(s_layer_unit));//初始化为零
+        layer[i] = new s_layer_unit[FB_WIDTH];
+        memset(layer[i],0,FB_WIDTH*sizeof(s_layer_unit));//初始化为零
     }
-    TRACE("--fb layer inited");
     return 0;
 }
 
+//! 卸载 fblayer 使用内存
 void DataPool::freeFbLayer()
 {
-    for( int i=0; i<MFB_HEIGHT; i++ )
+    for( int i=0; i<FB_HEIGHT; i++ )
     {
         delete[] layer[i];
     }
     delete[] layer;
-    TRACE("--fb layer freed");
 }
-*/

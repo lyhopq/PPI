@@ -10,6 +10,7 @@
 // 全局变量
 sysValue *sysval;
 
+
 MainWidget::MainWidget(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::MainWidget)
@@ -24,6 +25,7 @@ MainWidget::MainWidget(QWidget *parent) :
 
     sysval  = new sysValue;
     dp      = new DataPool;
+    fblayer = new FBLayer(dp);
     painter = new PPIPainter(dp);
     ppisec  = new PPISec(painter);
 }
@@ -32,6 +34,7 @@ MainWidget::~MainWidget()
 {
     delete sysval;
     delete dp;
+    delete fblayer;
     delete painter;
     delete ppisec;
 

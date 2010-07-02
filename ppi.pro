@@ -9,14 +9,16 @@ SOURCES += src/mainwidget.cpp \
     src/datapool.cpp \
     src/ppipainter.cpp \
     src/ppisec.cpp \
-    src/sysvalue.cpp
+    src/sysvalue.cpp \
+    src/fblayer.cpp
 HEADERS += src/mainwidget.h \
     src/frmppi.h \
     src/def.h \
     src/datapool.h \
     src/ppipainter.h \
     src/ppisec.h \
-    src/sysvalue.h
+    src/sysvalue.h \
+    src/fblayer.h
 FORMS += ui/mainwidget.ui
 OBJECTS_DIR = tmp
 MOC_DIR = tmp

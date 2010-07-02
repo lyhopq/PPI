@@ -5,6 +5,7 @@
 
 
 #include "frmppi.h"
+#include "fblayer.h"
 #include "ppipainter.h"
 #include "ppisec.h"
 
@@ -30,7 +31,8 @@ private:
 
     FrmPPI *frameppi;
 
-    DataPool *dp;
+    DataPool   *dp;
+    FBLayer    *fblayer;
     PPIPainter *painter;
     PPISec     *ppisec;
 };

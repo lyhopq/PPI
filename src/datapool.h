@@ -10,6 +10,23 @@
 #include "def.h"
 
 /*!
+*    \struct s_layer_unit
+*    \brief FrameBuffer 分层结构
+*/
+typedef struct s_layer_unit
+{
+    //! 一次信息
+    VIDEODATATYPE nfirst;
+
+    //反映当前状态
+    //! 是否有二次信息
+    bool bsecond;
+    //! 是否有屏蔽
+    bool bmask;
+}s_layer_unit;
+
+
+/*!
 *    \class DataPool
 *    \brief 加载数据并设置 FrameBuffer
 *
@@ -39,7 +56,7 @@ public:
     FB_COLORTYPE **fbp; //pointer to framebuffer mem
 
     //frame buffer layer
-    //s_layer_unit ** layer;
+    s_layer_unit ** layer;
 
     //pci share mem
     unsigned char * databuf;
@@ -70,11 +87,11 @@ private:
 
     int initDataTable();
     int initFbDev();
-    //int initFbLayer();
+    int initFbLayer();
 
     void freeDataTable();
     void freeFbDev();
-    //void freeFbLayer();
+    void freeFbLayer();
 };
 
 #endif // DATEPOOL_H
