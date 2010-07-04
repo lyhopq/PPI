@@ -18,11 +18,13 @@ PPISec::PPISec( PPIPainter *p )
     headAzi = 0;
 
 
+    /*
     secTimer=new QTimer(this);
     //connect( secTimer,SIGNAL( timeout()),this,SLOT( secTimeOut()));
     connect( secTimer,SIGNAL( timeout()),this,SLOT( draw()));
     secTimer->setSingleShot(false);
-    secTimer->start(1000); // 2s
+    secTimer->start(100); // 100ms
+    */
 }
 
 //! 析构函数

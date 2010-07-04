@@ -9,6 +9,7 @@
 
 // 全局变量
 sysValue *sysval;
+FILE     *fps; // 模拟一次数据文件
 
 
 MainWidget::MainWidget(QWidget *parent) :
@@ -16,6 +17,16 @@ MainWidget::MainWidget(QWidget *parent) :
     ui(new Ui::MainWidget)
 {
     ui->setupUi(this);
+
+    connect(ui->pbExit, SIGNAL(clicked()), this, SLOT(toExit()));
+
+    //******************
+    fps = fopen("data/data01.dat", "r");
+    if(fps == NULL)
+    {
+        printf("\nthe data file data01.dat is not open!\n");
+    }
+    //******************
 
     frameppi = new FrmPPI(this);
 
@@ -26,15 +37,31 @@ MainWidget::MainWidget(QWidget *parent) :
     sysval  = new sysValue;
     dp      = new DataPool;
     fblayer = new FBLayer(dp);
+    ppi     = new PPI(dp);
     painter = new PPIPainter(dp);
     ppisec  = new PPISec(painter);
+
+    ppith   = new PPIThread(this);
+    ppith->start();
+
+    secTimer = new QTimer(this);
+    connect(secTimer, SIGNAL(timeout()), this, SLOT(ppiUpdateSec()));
+    secTimer->setSingleShot(false);
+    secTimer->start(10); // 100ms
 }
 
 MainWidget::~MainWidget()
 {
+    //**********************
+    if(fps != NULL)
+    {
+        fclose(fps);
+    }
+    //**********************
     delete sysval;
     delete dp;
     delete fblayer;
+    delete ppi;
     delete painter;
     delete ppisec;
 
@@ -51,4 +78,30 @@ void MainWidget::changeEvent(QEvent *e)
     default:
         break;
     }
+}
+
+/*!
+*    \brief 更新 PPI 一次显示
+*
+*    \note 该函数被线程调用
+*/
+void MainWidget::ppiUpdate()
+{
+    ppi->ppiDraw();
+}
+
+/*!
+*    \brief 更新 PPI 二次显示
+*/
+void MainWidget::ppiUpdateSec()
+{
+    ppisec->draw();
+}
+
+
+void MainWidget::toExit()
+{
+    ppith->quit();
+
+    close();
 }

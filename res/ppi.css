@@ -1,5 +1,18 @@
 
-FrmPPI, FrmPPI QLabel
+FrmPPI
 {
     color: darkgreen;
+}
+
+FrmPPI QLabel
+{
+    color: darkgreen;
+    border: 2px solid white;
+    padding: 3px;
+    border-radius: 15px;
+}
+
+#warnTile
+{
+    border-width: 0px;
 }

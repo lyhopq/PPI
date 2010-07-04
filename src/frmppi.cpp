@@ -69,6 +69,7 @@ FrmPPI::FrmPPI(QWidget *parent)
 
     // 警告
     warnTitle = new QLabel(this);
+    warnTitle->setObjectName("warnTile");
     warnTitle->setGeometry(QRect(900,920,70,30));
     warnTitle->setText(tr("告 警"));
 

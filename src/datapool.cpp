@@ -94,10 +94,9 @@ int DataPool::initDataTable()
     MEMALLOCCHECK(randomx)
     randomy = new int[RND_LEN];
     MEMALLOCCHECK(randomy)
-
-    colortable = new MFB_COLORTYPE[256];//颜色表
-    MEMALLOCCHECK(colortable)
     */
+
+    colortable = new FB_COLORTYPE[256];//颜色表
 
     //从文件中读取
     FILE *fp;
@@ -177,19 +176,19 @@ int DataPool::initDataTable()
         fread(randomy,sizeof(int),RND_LEN,fp);
         fclose(fp);
     }
+    */
 
     // 颜色表初始化
-    if( (fp=fopen(MFB_COLORTABLE_FILE,"r"))==NULL )//defined in "fbinclude.h" #define MFB_COLORTABLE_FILE     "./dat/colortable16" or "colortable32"
+    if( (fp=fopen(FB_COLORTABLE_FILE,"r"))==NULL )//defined in "fbinclude.h" #define FB_COLORTABLE_FILE     "./dat/colortable16" or "colortable32"
     {
-        printf("read %s error!\n",MFB_COLORTABLE_FILE);
+        printf("read %s error!\n",FB_COLORTABLE_FILE);
         return -1;
     }
     else
     {
-        fread(colortable,sizeof(MFB_COLORTYPE),256,fp);
+        fread(colortable,sizeof(FB_COLORTYPE),256,fp);
         fclose(fp);
     }
-    */
 
     return 0;
 }

@@ -51,7 +51,7 @@ public:
     //int * randomy;
 
     //一次色彩表
-    //MFB_COLORTYPE *colortable;
+    FB_COLORTYPE *colortable;
 
     FB_COLORTYPE **fbp; //pointer to framebuffer mem
 

@@ -10,7 +10,9 @@ SOURCES += src/mainwidget.cpp \
     src/ppipainter.cpp \
     src/ppisec.cpp \
     src/sysvalue.cpp \
-    src/fblayer.cpp
+    src/fblayer.cpp \
+    src/ppi.cpp \
+    src/ppithread.cpp
 HEADERS += src/mainwidget.h \
     src/frmppi.h \
     src/def.h \
@@ -18,7 +20,9 @@ HEADERS += src/mainwidget.h \
     src/ppipainter.h \
     src/ppisec.h \
     src/sysvalue.h \
-    src/fblayer.h
+    src/fblayer.h \
+    src/ppi.h \
+    src/ppithread.h
 FORMS += ui/mainwidget.ui
 OBJECTS_DIR = tmp
 MOC_DIR = tmp
