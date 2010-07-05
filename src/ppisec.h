@@ -8,11 +8,27 @@
 #include <string.h>
 #include <QTimer>
 
+#include <vector>
+
 #include "ppipainter.h"
 #include "def.h"
 
 #include "sysvalue.h"
+#include "track.h"
 
+//! \typedef VecTrk 航迹集
+typedef std::vector<Track> VecTrk;
+//! \typedef VecTrkIte 航迹集迭代器
+typedef std::vector<Track>::iterator VecTrkIte;
+
+//! 不明
+const FB_COLORTYPE FB_SECOND_AMBIGUITY = 0x08d4fd;
+//! 敌方
+const FB_COLORTYPE FB_SECOND_ENEMY     = 0xff0000;
+//! 友方
+const FB_COLORTYPE FB_SECOND_COMPANY   = 0xc866fd;
+//! 我方
+const FB_COLORTYPE FB_SECOND_MYSELF    = 0x00ff00;
 
 /*!
 *    \class PPISec
@@ -29,7 +45,19 @@ public:
 
 public slots:
     void draw();
-    //void secTimeOut();
+
+    //*************
+    void secTimeOut();
+    void addTrack(unsigned char *track);
+    void delTrack(unsigned int);
+    void drawSingleTrack(VecTrkIte ite);
+    void clearSingleTrack(VecTrkIte ite);
+    void drawAllTrack();
+    void clearAllTrack();
+    void delAllTrack();
+    //*************
+
+    void clearSurface();
 
     /*
     void setRangeWeight(int cont );//设置量程范围
@@ -56,12 +84,19 @@ public slots:
 signals:
     //void setSectorRegionInfo(unsigned char *);
     //void showWarnFlag(int flag);
-public:
+
+private:
     QTimer* secTimer;
     PPIPainter * painter;
 
     PPIDispInfo *dispInfo;
     int headAzi;
+
+    //******************
+    VecTrk vectck;
+    VecTrkIte ite;
+    unsigned char sec_track[8];
+    //******************
 };
 
 #endif

@@ -5,6 +5,14 @@
 
 #include "sysvalue.h"
 
+#include "frmppi.h"
+#include "datapool.h"
+#include "fblayer.h"
+#include "ppi.h"
+#include "ppipainter.h"
+#include "ppisec.h"
+#include "ppithread.h"
+
 #include <QDebug>
 
 // 全局变量
@@ -33,21 +41,36 @@ MainWidget::MainWidget(QWidget *parent) :
     QHBoxLayout *layout = (QHBoxLayout *)this->layout();
     layout->addWidget(frameppi);
 
-
+    // 系统信息
     sysval  = new sysValue;
+
+    // 数据
     dp      = new DataPool;
+
+    // FrameBuffer 层
     fblayer = new FBLayer(dp);
+    fblayer->setOffset(2, 2);
+
+    // 一次视频
     ppi     = new PPI(dp);
+
+    // PPI 绘制工具
     painter = new PPIPainter(dp);
+
+    // 二次信息
     ppisec  = new PPISec(painter);
 
+    // PPI 一次视频显示线程
     ppith   = new PPIThread(this);
     ppith->start();
 
+    //********************************
+    // 二次信息更新
     secTimer = new QTimer(this);
     connect(secTimer, SIGNAL(timeout()), this, SLOT(ppiUpdateSec()));
     secTimer->setSingleShot(false);
-    secTimer->start(10); // 100ms
+    secTimer->start(1000); // 1s
+    //********************************
 }
 
 MainWidget::~MainWidget()

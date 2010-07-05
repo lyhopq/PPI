@@ -4,18 +4,19 @@
 #include <QWidget>
 
 
-#include "frmppi.h"
-#include "fblayer.h"
-#include "ppi.h"
-#include "ppipainter.h"
-#include "ppisec.h"
-#include "ppithread.h"
-
 namespace Ui {
     class MainWidget;
 }
 
 class QTimer;
+
+class FrmPPI;
+class DataPool;
+class FBLayer;
+class PPI;
+class PPIPainter;
+class PPISec;
+class PPIThread;
 
 /*!
 *    \class MainWidget
