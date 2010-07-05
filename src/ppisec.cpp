@@ -18,13 +18,27 @@ PPISec::PPISec( PPIPainter *p )
     headAzi = 0;
 
 
-    /*
+    //******************************
+    // 模拟目标
+    memset(sec_track,0,sizeof(sec_track));
+     //批号
+    sec_track[0] = 0x01;
+    sec_track[1] = 0x01;
+    //目标方位
+    sec_track[2] = 0x0f;
+    sec_track[3] = 0x00;
+    //距离
+    sec_track[4] = 0x0f;
+    sec_track[5] = 0x00;
+    //目标航向
+    sec_track[6] = 0x0f;
+    sec_track[7] = 0x00;
+
     secTimer=new QTimer(this);
-    //connect( secTimer,SIGNAL( timeout()),this,SLOT( secTimeOut()));
-    connect( secTimer,SIGNAL( timeout()),this,SLOT( draw()));
+    connect( secTimer,SIGNAL( timeout()),this,SLOT( secTimeOut()));
     secTimer->setSingleShot(false);
-    secTimer->start(100); // 100ms
-    */
+    secTimer->start(500); // 100ms
+    //******************************
 }
 
 //! 析构函数
@@ -53,50 +67,94 @@ void PPISec::draw()
 
     painter->drawCrossLine(dispInfo->centerX,dispInfo->centerY,dispInfo->radiusPPI);
     painter->drawScale(dispInfo->centerX,dispInfo->centerY);
-/*    //画舰首线
-    painter->setColor(MFB_BLUE);
+
+    //画舰首线
+    painter->setColor(FB_BLUE);
     painter->drawLine(dispInfo->centerX,dispInfo->centerY,headAzi,dispInfo->radiusPPI);
+
+    /*
     //画扇区
     pSectorRegion->drawAllSectorRegion();
     pWarnSectorRegion->drawAllSectorRegion();
+    */
     //画二次信息
     if(dispInfo->bSecondInfo)
         drawAllTrack();
+    /*
     //显示告警
     if(pWarnSectorRegion->getWarnFlag())
         emit(showWarnFlag(1));
     */
 }
 
-/*
-//模拟产生二次数据，送函数addTrack(unsigned char* track)处理。
+/*!
+*    \brief 模拟二次数据
+*
+*    模拟产生二次数据，送函数addTrack(unsigned char* track)处理。
+*/
 void PPISec::secTimeOut()
 {
-    sec_track[4] = sec_track[4] + 20;
+    // 距离
+    unsigned short *d = (unsigned short *)&sec_track[4];
+    static bool flag = true;
+    if(*d == 0x000f)
+    {
+        flag = true;
+    }
+    else if(*d == 0x03ff)
+    {
+        flag = false;
+    }
+    *d = flag ? *d+16 : *d-16;
+
+    // 方位
+    unsigned short *f = (unsigned short *)&sec_track[2];
+    if(*f == 0x0fff)
+    {
+        *f = 0x000f;
+        sec_track[0]++;      // 批号
+        sec_track[1] = 0x02; // 属性
+    }
+    *f += 16;
+
+    // 航向
+    unsigned short *h = (unsigned short *)&sec_track[6];
+    if(*h == 0x0fff)
+        *h = 0x0f;
+    *h += 16;
+
     addTrack(sec_track);
 }
+
+/*!
+*    \brief 增加航迹
+*
+*    \param track    目标信息
+*
+*    根据目标信息进行航迹处理。
 */
-/*
 void PPISec::addTrack(unsigned char *track)
 {
-   if( dispInfo->bFreeze == true)
+   if( dispInfo->bFreeze == true) // 画面冻结
         return;
-    unsigned int batchNum = track[0] + (track[1]>>4)*256;
-    unsigned char trackattr  = (track[1] & 0x03);
-    //计算方位
-    int angle = track[3] & 0x0f;//目标方位屏蔽高四位
+
+    unsigned int batchNum = track[0] + (track[1]>>4)*256;  // 批号
+    unsigned char trackattr  = (track[1] & 0x03);     // 属性
+
+    //方位
+    int angle = track[3] & 0x0f;
     angle = angle << 8;
     angle = angle + track[2];
-    double fw = angle;
+    double fw = (angle/4096.0)*3.14159*2.0;
 
-    angle = track[7] & 0x0f;//目标航向屏蔽高四位
+    //航向
+    angle = track[7] & 0x0f;
     angle = angle << 8;
     angle = angle + track[6];
 
-    fw = (fw / 4096.0) * 3.14159*2.0;
     //距离
-    double jlint = track[4] + (track[5] & 0x03) * 256;
-    if( jlint >= (dispInfo->rangePPI<<1))//超出量程
+    int jlint = track[4] + (track[5] & 0x03) * 256;
+    if( jlint >= (dispInfo->rangePPI<<1))//超出量程   x2 采集的距离是实际的2倍
         return;
     double jl = jlint * (double)dispInfo->radiusPPI / ((double)dispInfo->rangePPI * 2.0);
     //由方位和距离算出坐标
@@ -113,10 +171,12 @@ void PPISec::addTrack(unsigned char *track)
             break;
         }
     }
+
     if(dispInfo->bSecondInfo)//是否显示二次信息
     {
         if( bexit )//批号已经存在,增加新的点迹
         {
+            /*
             if(batchNum >= 300)//手动录取的目标
             {
                 double dx = x - *(ite->xend()-1);
@@ -126,20 +186,23 @@ void PPISec::addTrack(unsigned char *track)
                     degree = PI + PI + degree;
                 angle = (int)((degree*2048.0) / PI);
             }
+            */
             clearSingleTrack(ite);
             ite->append( (int)x, (int)y, angle );
-            ite->m_attr = trackattr;//设置属性
+            //ite->m_attr = trackattr;//设置属性
+            ite->setAttr(trackattr); //设置属性
             drawSingleTrack(ite);
-            pWarnSectorRegion->warnJudge((int)x, (int)y);
+            //pWarnSectorRegion->warnJudge((int)x, (int)y);
         }
         else//增加新的批号
         {
-            vectck.push_back( CTrack( batchNum ) );
+            vectck.push_back( Track( batchNum ) );
             ite = vectck.end()-1;
-            ite->m_attr = trackattr;
+            //ite->m_attr = trackattr;
+            ite->setAttr(trackattr); //设置属性
             ite->append( (int)x, (int)y, angle );
             drawSingleTrack(ite);
-            pWarnSectorRegion->warnJudge((int)x, (int)y);
+            //pWarnSectorRegion->warnJudge((int)x, (int)y);
         }
     }
     else
@@ -150,13 +213,20 @@ void PPISec::addTrack(unsigned char *track)
         }
         else//
         {
-            vectck.push_back( CTrack( batchNum ) );
+            vectck.push_back( Track( batchNum ) );
             ite = vectck.end()-1;
             ite->append( (int)x, (int)y, angle );
         }
      }
 }
 
+/*!
+*    \brief 删除航迹
+*
+*    \param barchNum    批号
+*
+*    根据批号删除航迹
+*/
 void PPISec::delTrack(unsigned int batchNum)
 {
     if( dispInfo->bFreeze == true)
@@ -172,29 +242,42 @@ void PPISec::delTrack(unsigned int batchNum)
     }
 }
 
-void PPISec::drawSingleTrack( VecTckIte ite )
+/*!
+*    \brief 绘制一条航迹
+*
+*    \param ite    航迹迭代器
+*
+*    根据 ite 提供的航迹数据绘制航迹。
+*/
+void PPISec::drawSingleTrack( VecTrkIte ite )
 {
-    MFB_COLORTYPE color = painter->getColor();
-    if(ite->m_attr == 0x00)//不明
-        painter->setColor(MFB_SECOND_AMBIGUITY);
-    else if(ite->m_attr == 0x01)//敌方
-        painter->setColor(MFB_SECOND_ENEMY);
-    else if(ite->m_attr == 0x02)//我方
-        painter->setColor(MFB_SECOND_MYSELF);
-    else if(ite->m_attr == 0x03)//友方
-        painter->setColor(MFB_SECOND_COMPANY);
+    FB_COLORTYPE color = painter->getColor();
+    unsigned int attr = ite->getAttr();
+    if(attr == 0x00)//不明
+        painter->setColor(FB_SECOND_AMBIGUITY);
+    else if(attr == 0x01)//敌方
+        painter->setColor(FB_SECOND_ENEMY);
+    else if(attr == 0x02)//我方
+        painter->setColor(FB_SECOND_MYSELF);
+    else if(attr == 0x03)//友方
+        painter->setColor(FB_SECOND_COMPANY);
     else
-        painter->setColor(MFB_SECOND_AMBIGUITY);
+        painter->setColor(FB_SECOND_AMBIGUITY);
+
     //画航迹点
     DeqIntIte xite,yite;
     for( xite = ite->xbegin(), yite = ite->ybegin(); xite!=ite->xend() && yite!=ite->yend(); xite++, yite++ )
         painter->drawTrackDot( *xite, *yite );
+
     //画目标批号
     painter->drawPlane( *(ite->xend()-1), *(ite->yend()-1), *(ite->aend()-1), ite->index() );
 
     painter->setColor(color);
 }
 
+/*!
+*    \brief 绘制航迹
+*/
 void PPISec::drawAllTrack()
 {
     for( ite = vectck.begin(); ite!=vectck.end(); ite++ )
@@ -203,10 +286,15 @@ void PPISec::drawAllTrack()
     }
 }
 
-void PPISec::clearSingleTrack( VecTckIte ite )
+/*!
+*    \brief 清除一条航迹
+*
+*    \param ite    航迹迭代器
+*/
+void PPISec::clearSingleTrack( VecTrkIte ite )
 {
-    MFB_COLORTYPE color = painter->getColor();
-    painter->setColor(MFB_CLEAR);
+    FB_COLORTYPE color = painter->getColor();
+    painter->setColor(FB_CLEAR);
     DeqIntIte xite,yite;
     for( xite = ite->xbegin(), yite = ite->ybegin(); xite!=ite->xend() && yite!=ite->yend(); xite++, yite++ )
         painter->drawTrackDot( *xite, *yite );
@@ -214,7 +302,10 @@ void PPISec::clearSingleTrack( VecTckIte ite )
     painter->setColor(color);
 }
 
-void CPPISec::clearAllTrack()
+/*!
+*    \brief 清除航迹
+*/
+void PPISec::clearAllTrack()
 {
     for( ite = vectck.begin(); ite!=vectck.end(); ite++ )
     {
@@ -222,17 +313,22 @@ void CPPISec::clearAllTrack()
     }
 }
 
-void CPPISec::clearSurface()
+/*!
+*    \brief 清除二次信息
+*
+*    该函数清除 PPI 的二次显示和航迹数据。
+*/
+void PPISec::clearSurface()
 {
     clearAllTrack();
     delAllTrack();
 }
 
-void CPPISec::delAllTrack()
+//! 清除航迹数据
+void PPISec::delAllTrack()
 {
     vectck.clear();
 }
-*/
 
 /*
 //设置量程范围

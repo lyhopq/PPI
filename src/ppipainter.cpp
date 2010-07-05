@@ -16,9 +16,9 @@ PPIPainter::PPIPainter( DataPool *dp )
     ny = m_dp->addr_near_y;
     fx = m_dp->addr_far_x;
     fy = m_dp->addr_far_y;
-    //colortable = m_dp->colortable;
+    colortable = m_dp->colortable;
     fbp = m_dp->fbp;
-    //layer = m_dp->layer;
+    layer = m_dp->layer;
 
     distantCircleCount = 1;
 
@@ -85,6 +85,26 @@ PPIPainter::PPIPainter( DataPool *dp )
     dot[i][4] = 0x42;dot[i][5] = 0x42;dot[i][6] = 0x42;dot[i][7] = 0x46;
     dot[i][8] = 0x3a;dot[i][9] = 0x02;dot[i][10] = 0x02;dot[i][11] = 0x44;
     dot[i][12] = 0x38;dot[i][13] = 0x00;dot[i][14] = 0x00;dot[i][15] = 0x00;
+
+    //点迹点
+    dot[10][0] = 0x0e;
+    dot[10][1] = 0x1f;
+    dot[10][2] = 0x1f;
+    dot[10][3] = 0x1f;
+    dot[10][4] = 0x0e;
+
+    /*
+    dot[10][0] = 0x00;
+    dot[10][1] = 0x0e;
+    dot[10][2] = 0x0e;
+    dot[10][3] = 0x0e;
+    dot[10][4] = 0x00;
+
+    dot[10][5] = 0x00;
+    dot[10][6] = 0x00;
+    dot[10][7] = 0x00;
+    */
+
 }
 
 /*!
@@ -139,18 +159,18 @@ void PPIPainter::setPixel(int x, int y, FB_COLORTYPE color)
     {
         if(color != FB_CLEAR)
         {
-            //layer[y][x].bsecond = true;
-            //if( !( layer[y][x].bmask ) )
+            layer[y][x].bsecond = true;
+            if( !( layer[y][x].bmask ) )
              {
                 fbp[y][x] = color;
              }
         }
         else
         {
-            //layer[y][x].bsecond = false;
-            //if( !( layer[y][x].bmask ) )
+            layer[y][x].bsecond = false;
+            if( !( layer[y][x].bmask ) )
              {
-              // fbp[y][x] = colortable[layer[y][x].nfirst];
+               fbp[y][x] = colortable[layer[y][x].nfirst];
              }
         }
     }
@@ -178,19 +198,26 @@ void PPIPainter::drawRect(int left, int up, int right, int down, FB_COLORTYPE co
     }
 }
 
-/*
-//画线
+/*!
+*    \brief 画直线
+*
+*    \param x    起点x坐标
+*    \param y    起点y坐标
+*    \param angle 倾角
+*    \param len  长度
+*
+*    以 (x,y) 为起点， angle 为倾角， 绘制一条长度为 len 的直线
+*/
 void PPIPainter::drawLine(int x,int y,int angle,int len)
 {
     int i,px,py;
     for(i=0;i<len;i++)
     {
-        px = chartAddrX[angle][i];
-        py = chartAddrY[angle][i];
+        px = nx[angle][i];
+        py = ny[angle][i];
         setPixel(x+px,y-py,color);
     }
 }
-*/
 
 /*!
 *    \brief 画坐标十字坐标
@@ -477,41 +504,47 @@ void PPIPainter::drawScale(int x,int y)
     }
 }
 
-/*
-//画航迹点
+
+/*!
+*    \brief 画航迹点
+*
+*    \param x    x坐标
+*    \param y    y坐标
+*
+*    在屏幕 (x,y) 处绘制一个航迹点。航迹点的数据为 dot[10]
+*/
 void PPIPainter::drawTrackDot(int x,int y)
  {
     int i=0,j,shift;
     for(i=-2; i<3; i++)
     {
-        int dy = y+i;
         shift=0x01;
         for(j=-2;j<3;j++)
         {
             if(dot[10][i+2] & shift)
             {
-                int dx = x+j;
-                setPixel(dx,dy,color);
+                setPixel(x+j,y+i,color);
             }
             shift = shift<<1;
         }
     }
  }
- */
 
-/*
+#define A360  4096
+#define A45   512
+#define A90   1024
+#define A150  1707
+#define A180  2048
+#define A210  2389
+#define A270  3072
+
+
 void PPIPainter::drawPlane(int x,int y,int angle,int batchNum)
 {
-   #define A360  4096
-   #define A45   512
-   #define A90   1024
-   #define A150  1707
-   #define A180  2048
-   #define A210  2389
-   #define A270  3072
-
-    int px = chartAddrX[angle][14];
-    int py = chartAddrY[angle][14];
+    //int px = chartAddrX[angle][14];
+    //int py = chartAddrY[angle][14];
+    int px = nx[angle][14];
+    int py = ny[angle][14];
 //     if(angle < A45)
 //     {
 //       px = chartAddrX[angle+A150][10] ;
@@ -555,43 +588,49 @@ void PPIPainter::drawPlane(int x,int y,int angle,int batchNum)
 //     }
     if(angle < A45)
     {
-      px = chartAddrX[angle][38] - 4;
-      py = chartAddrY[angle][38] - 4;
+      px = nx[angle][38] - 4;
+      py = ny[angle][38] - 4;
     }
     if(angle < A45*2)
     {
-        px = chartAddrX[angle][24];
-        py = chartAddrY[angle][38];
+        px = nx[angle][24];
+        py = ny[angle][38];
     }
     else if(angle < A180)
     {
-        px = chartAddrX[angle][22] - 8;
-        py = chartAddrY[angle][22];
+        px = nx[angle][22] - 8;
+        py = ny[angle][22];
     }
     else if(angle < A270)
     {
-        px = chartAddrX[angle][22] - 8 ;
-        py = chartAddrY[angle][22];
+        px = nx[angle][22] - 8 ;
+        py = ny[angle][22];
     }
     else if(angle < A45*7) //270-315
     {
-        px = chartAddrX[angle][38] + 8;
-        py = chartAddrY[angle][38] + 8;
+        px = nx[angle][38] + 8;
+        py = ny[angle][38] + 8;
 
     }
      else if(angle < A45*8) //315-360
     {
-        px = chartAddrX[angle][38] - 4;
-        py = chartAddrY[angle][38];
+        px = nx[angle][38] - 4;
+        py = ny[angle][38];
     }
-    drawLine(x,y,angle,15);
 
     int oldflag = textTransFlag;
     textTransFlag = 0;
-    drawNum(x+px,y-py,batchNum);
+
+    int dx = x+px;
+    int dy = y-px;
+    //qDebug() << dx << dy;
+    if((dx < FB_WIDTH - 50) && (dx > 50) && (dy < FB_HEIGHT - 50) && (dy > 50))
+    {
+        drawLine(x,y,angle,25);
+        drawNum(x+px,y-py,batchNum);
+    }
     textTransFlag = oldflag;
 }
-*/
 
 /*
 void PPIPainter::drawSectorRegion(int centerX,int centerY,int r1,int degree1,int r2,int degree2)

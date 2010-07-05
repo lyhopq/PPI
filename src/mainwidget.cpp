@@ -5,6 +5,14 @@
 
 #include "sysvalue.h"
 
+#include "frmppi.h"
+#include "datapool.h"
+#include "fblayer.h"
+#include "ppi.h"
+#include "ppipainter.h"
+#include "ppisec.h"
+#include "ppithread.h"
+
 #include <QDebug>
 
 // 全局变量
@@ -47,7 +55,7 @@ MainWidget::MainWidget(QWidget *parent) :
     secTimer = new QTimer(this);
     connect(secTimer, SIGNAL(timeout()), this, SLOT(ppiUpdateSec()));
     secTimer->setSingleShot(false);
-    secTimer->start(10); // 100ms
+    secTimer->start(1000); // 1s
 }
 
 MainWidget::~MainWidget()

@@ -31,9 +31,9 @@ public:
     void drawScale(int x,int y);
     void drawCrossLine(int x,int y,int r);
     void getDistantCircle();
-    //void drawLine(int x,int y,int angle,int len);
-    //void drawTrackDot(int x,int y);
-    //void drawPlane(int x,int y,int angle,int batchNum);
+    void drawLine(int x,int y,int angle,int len);
+    void drawTrackDot(int x,int y);
+    void drawPlane(int x,int y,int angle,int batchNum);
     //void drawSectorRegion(int centerX,int centerY,int r1,int degree1,int r2,int degree2);
     //void drawSectorRegion(int centerX,int centerY,int r1,int degree1,int r2,int degree2,int idNum);
     //void getAddrXY(int radius);
@@ -48,9 +48,9 @@ private:
     int ** ny;
     int ** fx;
     int ** fy;
-    //FB_COLORTYPE *colortable;
+    FB_COLORTYPE *colortable;
     FB_COLORTYPE ** fbp;//pointer to framebuffer mem
-    //s_layer_unit ** layer;//frame buffer layer
+    s_layer_unit ** layer;//frame buffer layer
 
     FB_COLORTYPE color;
     int **chartScaleX,**chartScaleY;
@@ -61,7 +61,7 @@ private:
     int textTransFlag;
     int distantCircleCount;
     int centerX,centerY;
-    char dot[10][16];//
+    char dot[11][16];//
 
     void drawPoint(int x,int y,int code);
     void getScaleCircle();

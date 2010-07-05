@@ -12,7 +12,8 @@ SOURCES += src/mainwidget.cpp \
     src/sysvalue.cpp \
     src/fblayer.cpp \
     src/ppi.cpp \
-    src/ppithread.cpp
+    src/ppithread.cpp \
+    src/track.cpp
 HEADERS += src/mainwidget.h \
     src/frmppi.h \
     src/def.h \
@@ -22,7 +23,8 @@ HEADERS += src/mainwidget.h \
     src/sysvalue.h \
     src/fblayer.h \
     src/ppi.h \
-    src/ppithread.h
+    src/ppithread.h \
+    src/track.h
 FORMS += ui/mainwidget.ui
 OBJECTS_DIR = tmp
 MOC_DIR = tmp
