@@ -17,6 +17,7 @@ class PPI;
 class PPIPainter;
 class PPISec;
 class PPIThread;
+class Yh;
 
 /*!
 *    \class MainWidget
@@ -50,6 +51,7 @@ private:
     PPIPainter *painter;
     PPISec     *ppisec;
     PPIThread  *ppith;
+    Yh         *yh;
 
     QTimer     *secTimer;
 };

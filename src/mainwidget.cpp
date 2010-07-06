@@ -12,6 +12,7 @@
 #include "ppipainter.h"
 #include "ppisec.h"
 #include "ppithread.h"
+#include "yh.h"
 
 #include <QDebug>
 
@@ -63,6 +64,9 @@ MainWidget::MainWidget(QWidget *parent) :
     // PPI 一次视频显示线程
     ppith   = new PPIThread(this);
     ppith->start();
+
+    // 余辉
+    yh = new Yh(dp);
 
     //********************************
     // 二次信息更新

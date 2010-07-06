@@ -47,8 +47,8 @@ public:
     int ** addr_far_y;
 
     //余辉表
-    //int * randomx;
-    //int * randomy;
+    int * randomx;
+    int * randomy;
 
     //一次色彩表
     FB_COLORTYPE *colortable;

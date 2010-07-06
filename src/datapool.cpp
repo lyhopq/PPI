@@ -54,7 +54,7 @@ DataPool::~DataPool()
     //delete[] dispbuf;
     //delete[] videoBuf;
     //delete[] aziBuf;
-    //freeFbLayer();
+    freeFbLayer();
     freeFbDev();
     freeDataTable();
 }
@@ -88,13 +88,9 @@ int DataPool::initDataTable()
     }
     */
 
-    /*
     //余辉随机数表
     randomx = new int[RND_LEN];
-    MEMALLOCCHECK(randomx)
     randomy = new int[RND_LEN];
-    MEMALLOCCHECK(randomy)
-    */
 
     colortable = new FB_COLORTYPE[256];//颜色表
 
@@ -153,11 +149,10 @@ int DataPool::initDataTable()
     }
     */
 
-    /*
     //余辉初始化
-    if( (fp=fopen("./dat/Rnd_xb","r"))==NULL )
+    if( (fp=fopen("./data/Rnd_xb","r"))==NULL )
     {
-        printf("read ./dat/Rnd_xb error!\n");
+        printf("read ./data/Rnd_xb error!\n");
         return -1;
     }
     else
@@ -166,9 +161,9 @@ int DataPool::initDataTable()
         fclose(fp);
     }
 
-    if( (fp=fopen("./dat/Rnd_yb","r"))==NULL )
+    if( (fp=fopen("./data/Rnd_yb","r"))==NULL )
     {
-        printf("read ./dat/Rnd_yb error!\n");
+        printf("read ./data/Rnd_yb error!\n");
         return -1;
     }
     else
@@ -176,7 +171,6 @@ int DataPool::initDataTable()
         fread(randomy,sizeof(int),RND_LEN,fp);
         fclose(fp);
     }
-    */
 
     // 颜色表初始化
     if( (fp=fopen(FB_COLORTABLE_FILE,"r"))==NULL )//defined in "fbinclude.h" #define FB_COLORTABLE_FILE     "./dat/colortable16" or "colortable32"
@@ -198,9 +192,9 @@ int DataPool::initDataTable()
 */
 void DataPool::freeDataTable()
 {
-    //delete[] colortable;
-    //delete[] randomy;
-    //delete[] randomx;
+    delete[] colortable;
+    delete[] randomy;
+    delete[] randomx;
 
     /*
     for( int i=0; i<ADDR_FAR_AZI_LEN; i++ )

@@ -1,6 +1,8 @@
 #include "ppithread.h"
 #include "mainwidget.h"
 
+#include <unistd.h>
+
 /*!
 *    \brief 构造函数
 *
@@ -27,6 +29,7 @@ void PPIThread::run()
     {
         //mw->ppiUpdate(mw->dp->databuf);
         mw->ppiUpdate();
+        usleep(2000);
     }
 }
 
