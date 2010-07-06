@@ -8,6 +8,7 @@ class QTimer;
 class QPoint;
 
 const double PI     = 3.14159;
+const double HD     = 180.0/PI;
 
 class FrmPPI: public QFrame
 {

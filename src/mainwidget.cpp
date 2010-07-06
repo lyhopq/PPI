@@ -50,6 +50,10 @@ MainWidget::MainWidget(QWidget *parent) :
 
     // FrameBuffer 层
     fblayer = new FBLayer(dp);
+    fblayer->setMaskRect(0, 0, 180, 50, true);
+    fblayer->setMaskRect(FB_WIDTH - 200, 0, 200, 50, true);
+    fblayer->setMaskRect(FB_WIDTH - 240, FB_HEIGHT - 50, 240, 50, true);
+    fblayer->setMaskRect(850, 920, 70, 30, true);
     fblayer->setOffset(2, 2);
 
     // 一次视频
@@ -73,7 +77,7 @@ MainWidget::MainWidget(QWidget *parent) :
     secTimer = new QTimer(this);
     connect(secTimer, SIGNAL(timeout()), this, SLOT(ppiUpdateSec()));
     secTimer->setSingleShot(false);
-    secTimer->start(1000); // 1s
+    secTimer->start(100); // 1s
     //********************************
 }
 

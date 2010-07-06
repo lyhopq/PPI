@@ -259,18 +259,18 @@ int DataPool::initFbDev()
 
     //从一维线性地址中分离出需要作图的区域,转换为二维地址空间
     //要注意这样映射后,fbp[x][y]在屏幕系奈恢盟轿獃,竖直为x
-    /*
-    fbp = new FB_COLORTYPE*[PPI_R];
-    for( int i=0; i<PPI_R; i++ )
+    fbp = new FB_COLORTYPE*[FB_HEIGHT];
+    for( int i=0; i<FB_HEIGHT; i++ )
     {
-        fbp[i] = (FB_COLORTYPE *)(fbplinear+(FB_XSTART+(FB_YSTART+i)*vinfo.xres)*bytes_per_pixel);
+        fbp[i] = (FB_COLORTYPE *)(fbplinear+(2+(2+i)*vinfo.xres)*bytes_per_pixel);
     }
-    */
+    /*
     fbp = new FB_COLORTYPE*[vinfo.yres];
     for( int i=0; i<vinfo.yres; i++ )
     {
         fbp[i] = (FB_COLORTYPE *)(fbplinear+i*vinfo.xres*bytes_per_pixel);
     }
+    */
     return 0;
 }
 

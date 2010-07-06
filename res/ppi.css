@@ -10,6 +10,7 @@ FrmPPI QLabel
     border: 2px solid white;
     padding: 3px;
     border-radius: 15px;
+    font: bold 15px;
 }
 
 #warnTile
