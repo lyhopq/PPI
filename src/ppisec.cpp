@@ -1,6 +1,7 @@
 #include <math.h>
 
 #include "ppisec.h"
+#include "sectorregion.h"
 
 #include <QDebug>
 
@@ -14,9 +15,19 @@ PPISec::PPISec( PPIPainter *p )
 {
     painter = p;
 
-    dispInfo = sysval->getDispInfo();
+    //dispInfo = sysval->getDispInfo();
+    //******************
+    //sysval->setEnadivert(true);
+    //******************
     headAzi = 0;
 
+    pSectorRegion = new SectorRegion(painter, 10, FB_YELLOW);
+    pSectorRegion->pOwner = this;
+    pWarnSectorRegion = new WarnSectorRegion(painter, 1, FB_RED);
+
+    //**********************
+    pSectorRegion->setENRegion(true); // 扇区使能
+    //**********************
 
     //******************************
     // 模拟目标
@@ -62,24 +73,24 @@ void PPISec::draw()
     //qDebug("dispInfo->centerX=%d,dispInfo->centerY=%d,dispInfo->radiusPPI=%d\n",dispInfo->centerX,dispInfo->centerY,dispInfo->radiusPPI);
 
     painter->setColor(FB_GREEN);
-    painter->drawDistantCircle(dispInfo->centerX,dispInfo->centerY);
-    painter->drawCircle(dispInfo->centerX,dispInfo->centerY,dispInfo->radiusPPI);
+    painter->drawDistantCircle(sysval->getCenterX(), sysval->getCenterY());
+    painter->drawCircle(sysval->getCenterX(), sysval->getCenterY(), sysval->getRadius());
 
-    painter->drawCrossLine(dispInfo->centerX,dispInfo->centerY,dispInfo->radiusPPI);
-    painter->drawScale(dispInfo->centerX,dispInfo->centerY);
+    painter->drawCrossLine(sysval->getCenterX(), sysval->getCenterY(), sysval->getRadius());
+    painter->drawScale(sysval->getCenterX(), sysval->getCenterY());
 
     //画舰首线
     painter->setColor(FB_BLUE);
-    painter->drawLine(dispInfo->centerX,dispInfo->centerY,headAzi,dispInfo->radiusPPI);
+    painter->drawLine(sysval->getCenterX(), sysval->getCenterY(), headAzi, sysval->getRadius());
 
-    /*
     //画扇区
     pSectorRegion->drawAllSectorRegion();
-    pWarnSectorRegion->drawAllSectorRegion();
-    */
+    //pWarnSectorRegion->drawAllSectorRegion();
+
     //画二次信息
-    if(dispInfo->bSecondInfo)
+    if(sysval->isSecondInfo())
         drawAllTrack();
+
     /*
     //显示告警
     if(pWarnSectorRegion->getWarnFlag())
@@ -135,7 +146,7 @@ void PPISec::secTimeOut()
 */
 void PPISec::addTrack(unsigned char *track)
 {
-   if( dispInfo->bFreeze == true) // 画面冻结
+   if( sysval->isFreeze() == true) // 画面冻结
         return;
 
     unsigned int batchNum = track[0] + (track[1]>>4)*256;  // 批号
@@ -154,12 +165,12 @@ void PPISec::addTrack(unsigned char *track)
 
     //距离
     int jlint = track[4] + (track[5] & 0x03) * 256;
-    if( jlint >= (dispInfo->rangePPI<<1))//超出量程   x2 采集的距离是实际的2倍
+    if( jlint >= (sysval->getRange()<<1))//超出量程   x2 采集的距离是实际的2倍
         return;
-    double jl = jlint * (double)dispInfo->radiusPPI / ((double)dispInfo->rangePPI * 2.0);
+    double jl = jlint * (double)sysval->getRadius()/((double)sysval->getRange()*2.0);
     //由方位和距离算出坐标
-    double x =  dispInfo->centerX + jl * (sin(fw));
-    double y =  dispInfo->centerY - jl * (cos(fw));
+    double x =  sysval->getCenterX() + jl * (sin(fw));
+    double y =  sysval->getCenterY() - jl * (cos(fw));
 
     //查找是否批号已存在
     bool bexit = false;
@@ -172,7 +183,7 @@ void PPISec::addTrack(unsigned char *track)
         }
     }
 
-    if(dispInfo->bSecondInfo)//是否显示二次信息
+    if(sysval->isSecondInfo())//是否显示二次信息
     {
         if( bexit )//批号已经存在,增加新的点迹
         {
@@ -225,7 +236,7 @@ void PPISec::addTrack(unsigned char *track)
 */
 void PPISec::delTrack(unsigned int batchNum)
 {
-    if( dispInfo->bFreeze == true)
+    if( sysval->isFreeze() == true)
             return;
     for( ite = vectck.begin(); ite!=vectck.end(); ite++ )
     {
@@ -326,9 +337,8 @@ void PPISec::delAllTrack()
     vectck.clear();
 }
 
-/*
 //设置量程范围
-void CPPISec::setRangeWeight(int cont )
+void PPISec::setRangeWeight(int cont )
 {
     int range=500;
     switch(cont)
@@ -339,23 +349,24 @@ void CPPISec::setRangeWeight(int cont )
         case 4:range = 500;break;
         default:range = 500;break;
     }
-    if(range != dispInfo->rangePPI)
+    if(range != sysval->getRange())
     {
         //先擦除原来的显示
-        MFB_COLORTYPE color = painter->getColor();
-        painter->setColor(MFB_CLEAR);
+        FB_COLORTYPE color = painter->getColor();
+        painter->setColor(FB_CLEAR);
         clearAllTrack();
         delAllTrack();
-        painter->drawDistantCircle(dispInfo->centerX,dispInfo->centerY);
-        dispInfo->rangePPI = range;
-        painter->rangePPI = range;
-        pSectorRegion->changeRange(range);
-        pWarnSectorRegion->changeRange(range);
+        painter->drawDistantCircle(sysval->getCenterX(), sysval->getCenterY());
+        sysval->setRange(range);
+        //painter->rangePPI = range;
+        //pSectorRegion->changeRange(range);
+        //pWarnSectorRegion->changeRange(range);
         painter->setColor(color);
     }
 }
+
 //设置距离圈
-void CPPISec::setDistantNum(int cont )
+void PPISec::setDistantNum(int cont )
 {
     int num=1;
     switch(cont)
@@ -368,91 +379,115 @@ void CPPISec::setDistantNum(int cont )
         default:num = 1;break;
     }
     //先擦除原来的显示
-    MFB_COLORTYPE color = painter->getColor();
-    painter->setColor(MFB_CLEAR);
-    painter->drawDistantCircle(dispInfo->centerX,dispInfo->centerY);
-    painter->drawCircle(dispInfo->centerX,dispInfo->centerY,dispInfo->radiusPPI);
-    painter->distantCircleCount = num;
+    FB_COLORTYPE color = painter->getColor();
+    painter->setColor(FB_CLEAR);
+    painter->drawDistantCircle(sysval->getCenterX(), sysval->getCenterY());
+    painter->drawCircle(sysval->getCenterX(), sysval->getCenterY(), sysval->getRadius());
+    painter->setCircleCount(num);
     painter->setColor(color);
 }
+
+/*
 //设置半径
-void CPPISec::setRadius(int cont)
+void PPISec::setRadius(int cont)
 {
     dispInfo->radiusPPI = cont;
-    painter->radiusPPI = cont;
-    pSectorRegion->changeRadius(cont);
-    pWarnSectorRegion->changeRadius(cont);
+    //painter->radiusPPI = cont;
+    //pSectorRegion->changeRadius(cont);
+    //pWarnSectorRegion->changeRadius(cont);
 }
 
 //设置圆心
-void CPPISec::setCenter(int cx,int cy)
+void PPISec::setCenter(int cx,int cy)
 {
      dispInfo->centerX = cx;
      dispInfo->centerY = cy;
-     pSectorRegion->setCenter(cx,cy);
-     pWarnSectorRegion->setCenter(cx,cy);
+     //pSectorRegion->setCenter(cx,cy);
+     //pWarnSectorRegion->setCenter(cx,cy);
 }
 */
 
-/*
-//响应鼠标按键消息
-int CPPISec::mousePress(QMouseEvent* e)
+/*!
+*    \brief 处理鼠标按键事件
+*
+*    \param e    鼠标事件
+*
+*    该鼠标按键响应函数处理以下事件：
+*    - 当偏心使能且当前未处于偏心时：设置为偏心显示
+*    - 当前扇区使能：画扇区
+*    - 当前警戒使能：画警戒扇区
+*
+*    \return bool
+*            - true    该次鼠标点击事件为以上所述事件
+*            - false   该次事件没有得到处理
+*
+*/
+bool PPISec::mousePress(QMouseEvent* e)
 {
     int cx = e->x();
     int cy = e->y();
-    if(dispInfo->enadivert == 1 && dispInfo->flagdivert==0)
+    //**********
+    //sysval->display();
+    //**********
+    if(sysval->isDivertEnable() && !sysval->isDivert()) // 使能偏心且当前不偏心
     {
         //在偏心之前清除二次画面
-        MFB_COLORTYPE color = painter->getColor();
+        FB_COLORTYPE color = painter->getColor();
 
         clearAllTrack();
         delAllTrack();
-        painter->setColor(MFB_CLEAR);
-        painter->drawDistantCircle(dispInfo->centerX,dispInfo->centerY);
-        painter->drawCircle(dispInfo->centerX,dispInfo->centerY,dispInfo->radiusPPI);
-        painter->drawCrossLine(dispInfo->centerX,dispInfo->centerY,dispInfo->radiusPPI);
-        painter->drawScale(dispInfo->centerX,dispInfo->centerY);
+        painter->setColor(FB_CLEAR);
+        painter->drawDistantCircle(sysval->getCenterX(), sysval->getCenterY());
+        painter->drawCircle(sysval->getCenterX(), sysval->getCenterY(), sysval->getRadius());
+        painter->drawCrossLine(sysval->getCenterX(), sysval->getCenterY(), sysval->getRadius());
+        painter->drawScale(sysval->getCenterX(), sysval->getCenterY());
+
         //清除舰首线
-        painter->drawLine(dispInfo->centerX,dispInfo->centerY,headAzi,dispInfo->radiusPPI);
+        painter->drawLine(sysval->getCenterX(), sysval->getCenterY(), headAzi, sysval->getRadius());
         pSectorRegion->clearAllSectorRegion();
         pWarnSectorRegion->clearAllSectorRegion();
+
         //设置半径
-        setRadius(PPI_RADIUS * 2);//512*2
+        sysval->setRadious(PPI_R);
         //设置圆心坐标
-        setCenter(cx,cy);
+        sysval->setCenter(cx, cy);
         //更新数据
         painter->getScaleCircle();
-        dispInfo->flagdivert=1;
+        sysval->setDivert(true);
 
         painter->setColor(color);
     }
-    else if(pSectorRegion->regionEna)
+    else if(pSectorRegion->isEnRegion()) // 扇区使能
     {
         int x,y;
-        x= cx - dispInfo->centerX;
-        y= dispInfo->centerY - cy;
-        if(e->button() == Qt::LeftButton)
+        x = cx - sysval->getCenterX();
+        y = sysval->getCenterY() - cy;
+        if(e->button() == Qt::LeftButton) // 左键
             pSectorRegion->setPressPoint(1,x,y);
-        else if(e->button() == Qt::RightButton)
+        else if(e->button() == Qt::RightButton) // 右键
             pSectorRegion->setPressPoint(0,x,y);
     }
-    else if(pWarnSectorRegion->regionEna)
+    else if(pWarnSectorRegion->isEnRegion()) // 警戒使能
     {
         int x,y;
-        x= cx - dispInfo->centerX;
-        y= dispInfo->centerY - cy;
-        if(e->button() == Qt::LeftButton)
+        x= cx - sysval->getCenterX();
+        y= sysval->getCenterY() - cy;
+        if(e->button() == Qt::LeftButton) // 左键
             pWarnSectorRegion->setPressPoint(1,x,y);
-        else if(e->button() == Qt::RightButton)
+        else if(e->button() == Qt::RightButton) // 右键
             pWarnSectorRegion->setPressPoint(0,x,y);
     }
     else
-        return(0);
-    return(1);
+        return false;
+    return true;
 }
-//响应鼠标移动消息
-void CPPISec::mouseMove(int cx,int cy)
+
+/*!
+*    \brief 响应鼠标移动消息
+*/
+void PPISec::mouseMove(int cx,int cy)
 {
+    /*
      if(pSectorRegion->regionEna)
      {
         int x,y;
@@ -467,17 +502,18 @@ void CPPISec::mouseMove(int cx,int cy)
         y= dispInfo->centerY - cy;
         pWarnSectorRegion->setMovePoint(x,y);
      }
+     */
 }
-*/
 
-/*
 //设置挖区工作方式
-void CPPISec::setSectorRegion(int flag)
+void PPISec::setSectorRegion(int flag)
 {
      pSectorRegion->setSectorRegion(flag);
 }
+
+/*
 //挖区设置成功,将参数传递给监控
-void CPPISec::sendSectorRegion(sectorRegionInfo *info)
+void PPISec::sendSectorRegion(sectorRegionInfo *info)
 {
     unsigned char *buf = new unsigned char[10];
     double scale = (double)dispInfo->rangePPI/(double)dispInfo->radiusPPI;
@@ -519,11 +555,15 @@ void CPPISec::sendSectorRegion(sectorRegionInfo *info)
     emit(setSectorRegionInfo(buf));
     delete []buf;
 }
+*/
+
 //设置警戒区
-void CPPISec::setWarnSectorRegion(int flag)
+void PPISec::setWarnSectorRegion(int flag)
 {
      pWarnSectorRegion->setSectorRegion(flag);
 }
+
+/*
 //使能偏心显示
 void CPPISec::enableDivert()
 {

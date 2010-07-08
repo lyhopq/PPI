@@ -77,7 +77,6 @@ int DataPool::initDataTable()
         addr_near_y[i] = new int[ADDR_NEAR_SMP_LEN];
     }
 
-    /*
     //远区
     addr_far_x = new int*[ADDR_FAR_AZI_LEN];
     addr_far_y = new int*[ADDR_FAR_AZI_LEN];
@@ -86,7 +85,6 @@ int DataPool::initDataTable()
         addr_far_x[i] = new int[ADDR_FAR_SMP_LEN];
         addr_far_y[i] = new int[ADDR_FAR_SMP_LEN];
     }
-    */
 
     //余辉随机数表
     randomx = new int[RND_LEN];
@@ -98,9 +96,9 @@ int DataPool::initDataTable()
     FILE *fp;
 
     //近区初始化
-    if( (fp=fopen("./data/Rad_4096_512_xb","r"))==NULL )
+    if( (fp=fopen("./data/Rad_4096_500_xb","r"))==NULL )
     {
-        printf("read ./data/Rad_4096_512_xb error!\n");
+        printf("read ./data/Rad_4096_500_xb error!\n");
         return -1;
     }
     else
@@ -110,9 +108,9 @@ int DataPool::initDataTable()
         fclose(fp);
     }
 
-    if( (fp=fopen("./data/Rad_4096_512_yb","r"))==NULL )
+    if( (fp=fopen("./data/Rad_4096_500_yb","r"))==NULL )
     {
-        printf("read ./data/Rad_4096_512_yb error!\n");
+        printf("read ./data/Rad_4096_500_yb error!\n");
         return -1;
     }
     else
@@ -122,7 +120,6 @@ int DataPool::initDataTable()
         fclose(fp);
     }
 
-    /*
     //远区初始化
     if( (fp=fopen("./data/Rad_8192_512_xb","r"))==NULL )
     {
@@ -147,7 +144,6 @@ int DataPool::initDataTable()
             fread(addr_far_y[i],sizeof(int),ADDR_FAR_SMP_LEN,fp);
         fclose(fp);
     }
-    */
 
     //余辉初始化
     if( (fp=fopen("./data/Rnd_xb","r"))==NULL )
@@ -188,7 +184,7 @@ int DataPool::initDataTable()
 }
 
 /*!
-*    退出是释放一加载的内存
+*    退出是释放数组表的内存
 */
 void DataPool::freeDataTable()
 {
@@ -196,7 +192,6 @@ void DataPool::freeDataTable()
     delete[] randomy;
     delete[] randomx;
 
-    /*
     for( int i=0; i<ADDR_FAR_AZI_LEN; i++ )
     {
         delete[] addr_far_x[i];
@@ -204,7 +199,6 @@ void DataPool::freeDataTable()
     }
     delete[] addr_far_x;
     delete[] addr_far_y;
-    */
 
     for( int i=0; i<ADDR_NEAR_AZI_LEN; i++ )
     {

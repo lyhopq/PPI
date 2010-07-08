@@ -9,6 +9,7 @@ namespace Ui {
 }
 
 class QTimer;
+class QMouseEvent;
 
 class FrmPPI;
 class DataPool;
@@ -41,6 +42,9 @@ protected slots:
     void ppiUpdateSec();
     void toExit();
 
+    void mousePress(QMouseEvent *);
+    void mouseMove(QMouseEvent *);
+
 private:
     Ui::MainWidget *ui;
 
@@ -54,6 +58,8 @@ private:
     Yh         *yh;
 
     QTimer     *secTimer;
+
+    bool bPreDivert;
 };
 
 #endif // MAINWIDGET_H

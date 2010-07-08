@@ -7,9 +7,6 @@ class QLabel;
 class QTimer;
 class QPoint;
 
-const double PI     = 3.14159;
-const double HD     = 180.0/PI;
-
 class FrmPPI: public QFrame
 {
     Q_OBJECT
@@ -32,6 +29,7 @@ class FrmPPI: public QFrame
         *
         *    \sa setRange(), range()
         */
+        /*
         enum RANGE
         {
             R_75  = 75,
@@ -39,6 +37,7 @@ class FrmPPI: public QFrame
             R_300 = 300,
             R_500 = 500
         };
+        */
 
         FrmPPI(QWidget *parent = 0);
 
@@ -47,13 +46,13 @@ class FrmPPI: public QFrame
         *    \return QPoint
         *    \see setOrigin(), resetOrigin()
         */
-        QPoint origin() const { return org; };
+        //QPoint origin() const { return org; };
 
         /*!
         *    \brief 得到当前 PPI 量程
         *    \sa setRange()
         */
-        int range() const { return _range; };
+        //int range() const { return _range; };
 
     protected:
         void mouseMoveEvent(QMouseEvent *);
@@ -61,9 +60,9 @@ class FrmPPI: public QFrame
 
     public slots:
         void updateTime();
-        void setOrigin(QPoint &);
-        void resetOrigin();
-        void setRange(RANGE rangeType);
+        //void setOrigin(QPoint &);
+        //void resetOrigin();
+        //void setRange(RANGE rangeType);
         void setWarnFlag(bool flag);
 
     signals:
@@ -86,10 +85,12 @@ class FrmPPI: public QFrame
         QLabel *warnTitle;
         QTimer *timer;
 
+        /*
         QPoint org;
 
         RANGE _range;
         int rangeCal;
+        */
         bool warnFlag;
         int warnCnt;
 };

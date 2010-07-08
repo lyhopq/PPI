@@ -28,6 +28,7 @@ const FB_COLORTYPE FB_CLEAR=0x000000;
 const int FB_WIDTH     = 1020;
 const int FB_HEIGHT    = 1020;
 const int PPI_R        = 1000; // PPI 直径
+const int PPI_r        = PPI_R/2; // PPI 半径
 
 
 // PPI 数据
@@ -65,6 +66,10 @@ const int VIDEODISPMASK = 0xff;
 const double VIDEODISPLEN = 256.0; // 2^8
 
 #define FB_COLORTABLE_FILE     "./data/colortable32"
+
+const double PI     = 3.14159;
+const double HD     = 180.0/PI;
+
 
 
 #endif // DEF_H

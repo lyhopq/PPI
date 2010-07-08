@@ -1,6 +1,9 @@
 #include "ppipainter.h"
+#include "sysvalue.h"
 
 #include <QDebug>
+
+extern sysValue *sysval;
 
 /*!
 *    \brief 构造函数
@@ -26,10 +29,14 @@ PPIPainter::PPIPainter( DataPool *dp )
     //chartAddrY = NULL;
     chartScaleX = NULL;
     chartScaleY = NULL;
+
+    /*
     radiusPPI = PPI_R/2;
     rangePPI = 500;
     centerX = FB_WIDTH/2;
     centerY = FB_HEIGHT/2;
+    */
+
     textTransFlag  = 1;
     color = FB_GREEN;
     //getAddrXY(1024);
@@ -318,7 +325,7 @@ void PPIPainter::drawCircle(int x,int y,int r)
     int ** pny = ny;
     //int scale = 1024;//11.378=360.0*4096.0;
     int scale = 1024;//11.378=360.0*4096.0;
-    if(r > 512)
+    if(r > PPI_r)
     {
         pnx = fy;
         pny = fx;
@@ -355,8 +362,8 @@ void PPIPainter::drawCircle(int x,int y,int r)
 void PPIPainter::drawDistantCircle(int x,int y)
 {
     int px,py;
-    int R = (int)((double)radiusPPI/(double)(distantCircleCount+1));
-    double num = (double)rangePPI / (double)(distantCircleCount+1);
+    int R = (int)((double)sysval->getRadius()/(double)(distantCircleCount+1));
+    double num = (double)sysval->getRange()/(double)(distantCircleCount+1);
 
     int ** pnx = nx;
     int ** pny = ny;
@@ -368,7 +375,7 @@ void PPIPainter::drawDistantCircle(int x,int y)
         pnx = ny;
         pny = nx;
         scale = 1024;
-        if(r > 512)
+        if(r > PPI_r)
         {
             pnx = fy;
             pny = fx;
@@ -439,7 +446,7 @@ void PPIPainter::getScaleCircle()
     int ** pnx = nx;
     int ** pny = ny;
     double scale = 11.378;//11.378*360.0=4096.0;
-    if(radiusPPI > 512)
+    if(sysval->getRadius() > PPI_r)
     {
         pnx = fy;
         pny = fx;
@@ -451,11 +458,11 @@ void PPIPainter::getScaleCircle()
         for(j=0;j<12;j++)
         {
 
-            chartScaleX[angle][j] = pnx[a][radiusPPI -j];
-            chartScaleY[angle][j] = pny[a][radiusPPI -j];
+            chartScaleX[angle][j] = pnx[a][sysval->getRadius()-j];
+            chartScaleY[angle][j] = pny[a][sysval->getRadius()-j];
         }
-        chartScaleX[angle][j] = pnx[a][radiusPPI -24]; // 刻度值的起始坐标
-        chartScaleY[angle][j] = pny[a][radiusPPI -24];
+        chartScaleX[angle][j] = pnx[a][sysval->getRadius()-24]; // 刻度值的起始坐标
+        chartScaleY[angle][j] = pny[a][sysval->getRadius()-24];
     }
 }
 
@@ -537,7 +544,6 @@ void PPIPainter::drawTrackDot(int x,int y)
 #define A180  2048
 #define A210  2389
 #define A270  3072
-
 
 void PPIPainter::drawPlane(int x,int y,int angle,int batchNum)
 {
@@ -632,25 +638,30 @@ void PPIPainter::drawPlane(int x,int y,int angle,int batchNum)
     textTransFlag = oldflag;
 }
 
-/*
+
 void PPIPainter::drawSectorRegion(int centerX,int centerY,int r1,int degree1,int r2,int degree2)
 {
+    int **chartAddrX,**chartAddrY;
+    chartAddrX = nx; chartAddrY = ny;
     int start,diff,i,x,y;
     if(r1>r2)
     {
-        start = r2;
-        diff = r1-r2;
+        start = r2; // 外径
+        diff = r1-r2; // 间距
     }
     else
     {
         start = r1;
         diff = r2-r1;
     }
+    //qDebug() << diff << "!!!!!!!!!!!!!!!!!!!!!!!";
     for(i=0;i<diff;i++)
     {
         x = centerX + chartAddrX[degree1][start + i];
         y = centerY - chartAddrY[degree1][start + i];
         setPixel(x,y,color);
+        //qDebug() << "(" << x << y << ")";
+        //printf("(%d, %d)\n", x, y);
         x = centerX + chartAddrX[degree2][start + i];
         y = centerY - chartAddrY[degree2][start + i];
         setPixel(x,y,color);
@@ -671,27 +682,31 @@ void PPIPainter::drawSectorRegion(int centerX,int centerY,int r1,int degree1,int
     }
 }
 
-void CPainter::drawSectorRegion(int centerX,int centerY,int r1,int degree1,int r2,int degree2,int idNum)
+void PPIPainter::drawSectorRegion(int centerX,int centerY,int r1,int degree1,int r2,int degree2,int idNum)
 {
-    if(r1 > radiusPPI)
-        r1 = radiusPPI;
+    if(r1 > sysval->getRadius())
+        r1 = sysval->getRadius();
 
-    if(r2 > radiusPPI)
-        r2 = radiusPPI;
+    if(r2 > sysval->getRadius())
+        r2 = sysval->getRadius();
 
-    if((r1 == r2) && (r1 == radiusPPI))
+    if((r1 == r2) && (r1 == sysval->getRadius()))
         return;
 
-    int r = r2>r1?r2:r1;
+    int r = r2>r1?r2:r1; // r 外径
 
-    drawSectorRegion(centerX,centerY,r1,degree1,r2,degree2);
+    drawSectorRegion(sysval->getCenterX(), sysval->getCenterY(),r1,degree1,r2,degree2);
 
     if(r>10)
         r-=10;
-    int px =  chartAddrX[degree2][r];
-    int py =  chartAddrY[degree2][r];
-    drawNum(centerX  + px, centerY  - py,idNum);
+    int px =  nx[degree2][r];
+    int py =  ny[degree2][r];
+    //drawNum(sysval->getCenterX() + px, sysval->getCenterY() - py,idNum);
+    if(r1 != r2)
+        drawNum(centerX + px, centerY - py,idNum);
 }
+
+/*
 /////////////////////////////////////////////
 //根据输入的区位码,输出汉字
 //qh区号,wh位号

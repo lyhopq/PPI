@@ -9,6 +9,7 @@
 #include <math.h>
 
 #include "frmppi.h"
+#include "sysvalue.h"
 #include "def.h"
 
 const int M_WIDTH = 24;
@@ -77,6 +78,7 @@ static unsigned char cm_bits[] =  // cursor bitmap mask
    0x00, 0x18, 0x00
 };
 
+extern sysValue *sysval;
 
 /*!
 *    \class FrmPPI
@@ -95,10 +97,10 @@ static unsigned char cm_bits[] =  // cursor bitmap mask
 FrmPPI::FrmPPI(QWidget *parent)
     : QFrame(parent)
 {
-    _range = R_500;
-    rangeCal = 500.0;
+    //_range = R_500;
+    //rangeCal = 500.0;
 
-    resetOrigin(); // 设置 PPI 原点
+    //resetOrigin(); // 设置 PPI 原点
 
     setFixedSize(FB_WIDTH, FB_HEIGHT);
 
@@ -223,12 +225,12 @@ void FrmPPI::mouseMoveEvent(QMouseEvent *e)
     y = e->y();
 
     // 得到 PPI 坐标
-    x = x - org.x();
-    y = org.y() - y;
+    x = x - sysval->getCenterX();
+    y = sysval->getCenterY() - y;
 
     // 获取半径
     rp = sqrt(x*x + y*y);
-    r = rp*((double)_range/rangeCal);
+    r = rp*((double)sysval->getRange()/PPI_r);
 
     // 获取方位角
     a = atan2((double)x, (double)y) + 2*PI*(x < 0 ? 1:0);
@@ -263,6 +265,7 @@ void FrmPPI::mousePressEvent(QMouseEvent *e)
 *
 *    \note 坐标为 Widget 的直角坐标值
 */
+/*
 void FrmPPI::setOrigin(QPoint &p)
 {
     int x = p.x();
@@ -274,13 +277,16 @@ void FrmPPI::setOrigin(QPoint &p)
         org.setY(y);
     }
 }
+*/
 
+/*
 //! 设置 PPI 原点为默认
 void FrmPPI::resetOrigin()
 {
     org.setX(FB_WIDTH/2);
     org.setY(FB_HEIGHT/2);
 }
+*/
 
 /*!
 *    \brief 设置 PPI 量程
@@ -289,7 +295,9 @@ void FrmPPI::resetOrigin()
 *
 *    \sa range()
 */
+/*
 void FrmPPI::setRange(RANGE rangeType)
 {
     _range = rangeType;
 }
+*/

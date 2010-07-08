@@ -55,7 +55,8 @@ sysValue::sysValue()
         sysVar.dispInfo.centerX = FB_WIDTH/2;   //中心点坐标
         sysVar.dispInfo.centerY = FB_HEIGHT/2;
         sysVar.dispInfo.rangePPI = 500;         //量程500公里
-        sysVar.dispInfo.radiusPPI = PPI_R/2;      //半径
+        sysVar.dispInfo.radiusPPI = PPI_R/2;    //半径
+        sysVar.dispInfo.bFirstInfo = true;      //一次信息标志
         sysVar.dispInfo.bSecondInfo = true;     //二次信息标志
         sysVar.dispInfo.enadivert = 0;          //偏心显示使能标志
         sysVar.dispInfo.flagdivert = 0;         //偏心显示状态标志
@@ -69,6 +70,17 @@ sysValue::sysValue()
         sysVar.code_ldzt = 1;   //雷达自检总状态,1为正常
 
     }
+
+    //*****
+    resetCenter();
+    setRange(500);
+    sysVar.dispInfo.radiusPPI = PPI_R/2;    //半径
+    sysVar.dispInfo.bFirstInfo = true;      //一次信息标志
+    sysVar.dispInfo.bSecondInfo = true;     //二次信息标志
+    sysVar.dispInfo.enadivert = 0;          //偏心显示使能标志
+    sysVar.dispInfo.flagdivert = 0;         //偏心显示状态标志
+    //*****
+
 }
 
 sysValue::~sysValue()
@@ -120,3 +132,15 @@ void sysValue::setSystemBCDTime()
 
 }
 */
+
+//! 打印系统信息
+void sysValue::display()
+{
+    printf("\n##########################################\n");
+    printf("CenterX: %d\t CenterY: %d\n", sysVar.dispInfo.centerX, sysVar.dispInfo.centerY);
+    printf("Radious: %d\t Range: %d\n", sysVar.dispInfo.radiusPPI, sysVar.dispInfo.rangePPI);
+    printf("isFirstInfo: %d\t isSecondInfo: %d\n", sysVar.dispInfo.bFirstInfo, sysVar.dispInfo.bSecondInfo);
+    printf("isDivert: %d\t flagDivert: %d\n", sysVar.dispInfo.enadivert, sysVar.dispInfo.flagdivert);
+    printf("isFreeze: %d\n", sysVar.dispInfo.bFreeze);
+    printf("\n##########################################\n");
+}

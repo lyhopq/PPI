@@ -32,15 +32,19 @@ public:
     void drawCrossLine(int x,int y,int r);
     void getDistantCircle();
     void drawLine(int x,int y,int angle,int len);
+    void getScaleCircle();
     void drawTrackDot(int x,int y);
     void drawPlane(int x,int y,int angle,int batchNum);
-    //void drawSectorRegion(int centerX,int centerY,int r1,int degree1,int r2,int degree2);
-    //void drawSectorRegion(int centerX,int centerY,int r1,int degree1,int r2,int degree2,int idNum);
+    void drawSectorRegion(int centerX,int centerY,int r1,int degree1,int r2,int degree2);
+    void drawSectorRegion(int centerX,int centerY,int r1,int degree1,int r2,int degree2,int idNum);
     //void getAddrXY(int radius);
 
     void setColor(FB_COLORTYPE col){color = col;}
     FB_COLORTYPE getColor(){return color;}
     //////////////////////////////////
+
+    //! 设置距离圈个数
+    void setCircleCount(int num) { distantCircleCount = num; }
 
 private:
     DataPool *m_dp;
@@ -56,15 +60,17 @@ private:
     int **chartScaleX,**chartScaleY;
     //int **chartAddrX,**chartAddrY;
     int **chartCircle;
+    /*
     int radiusPPI;
     int rangePPI;//量程
-    int textTransFlag;
-    int distantCircleCount;
     int centerX,centerY;
+    */
+
+    int textTransFlag;
+    int distantCircleCount; // 距离圈个数
     char dot[11][16];//
 
     void drawPoint(int x,int y,int code);
-    void getScaleCircle();
 };
 
 #endif

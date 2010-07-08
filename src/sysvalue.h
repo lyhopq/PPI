@@ -3,6 +3,8 @@
 
 #include <stdio.h>
 
+#include "def.h"
+
 /*!
 *    \struct PPIDispInfo
 *    \brief PPI 显示参数
@@ -15,8 +17,8 @@ typedef struct PPIDispInfo
     int centerY;
     int radiusPPI;                  //半径
     int rangePPI;                   //量程
-    int enadivert;                  //
-    int flagdivert;
+    bool enadivert;                  //偏心使能
+    bool flagdivert;                 //偏心标志
     bool bFirstInfo;                // 一次显示
     bool bSecondInfo;               // 二次显示
     bool bFreeze;                   // 画面冻结
@@ -107,6 +109,58 @@ public:
     */
     PPIDispInfo *getDispInfo() { return &(sysVar.dispInfo); };
     void saveSystemValue();
+
+    //! 取得原点x坐标
+    int getCenterX() const { return sysVar.dispInfo.centerX; }
+    //! 取得原点y坐标
+    int getCenterY() const { return sysVar.dispInfo.centerY; }
+    //! 取得半径
+    int getRadius() const { return sysVar.dispInfo.radiusPPI; }
+    //! 取得量程
+    int getRange() const { return sysVar.dispInfo.rangePPI; }
+    //! 偏心是否使能
+    bool isDivertEnable() const { return sysVar.dispInfo.enadivert; }
+    //! 取得偏心状态
+    bool isDivert() const { return sysVar.dispInfo.flagdivert; }
+    //! 一次显示是否使能
+    bool isFirstInfo() const { return sysVar.dispInfo.bFirstInfo; }
+    //! 二次显示是否使能
+    bool isSecondInfo() const { return sysVar.dispInfo.bSecondInfo; }
+    //! 画面冻结是否使能
+    bool isFreeze() const { return sysVar.dispInfo.bFreeze; }
+
+    //! 设置默认原点
+    void resetCenter()
+    {
+        sysVar.dispInfo.centerX = FB_WIDTH/2;
+        sysVar.dispInfo.centerY = FB_HEIGHT/2;
+    }
+    //! 设置原点
+    void setCenter(int x, int y)
+    {
+        if((x>=0) && (x<FB_WIDTH) && (y>=0) && (y<FB_HEIGHT))
+        {
+            sysVar.dispInfo.centerX = x;
+            sysVar.dispInfo.centerY = y;
+        }
+    }
+
+    //! 设置半径
+    void setRadious(int r) { sysVar.dispInfo.radiusPPI = r; }
+    //! 设置量程
+    void setRange(int r) { sysVar.dispInfo.rangePPI = r; }
+    //! 设置偏心使能
+    void setEnadivert(bool b) { sysVar.dispInfo.enadivert = b; }
+    //! 设置偏心状态
+    void setDivert(bool b) { sysVar.dispInfo.flagdivert = b; }
+    //! 设置一次显示使能
+    void setEnFirst(bool b) { sysVar.dispInfo.bFirstInfo = b; }
+    //! 设置二次显示使能
+    void setEnSecond(bool b) { sysVar.dispInfo.bSecondInfo = b; }
+    //! 设置画面冻结
+    void setEnFreeze(bool b) { sysVar.dispInfo.bFreeze = b; }
+
+    void display();
 
     //unsigned long getSystemTime();
     //void setSystemBCDTime();

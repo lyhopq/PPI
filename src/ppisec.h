@@ -15,6 +15,7 @@
 
 #include "sysvalue.h"
 #include "track.h"
+#include "sectorregion.h"
 
 //! \typedef VecTrk 航迹集
 typedef std::vector<Track> VecTrk;
@@ -29,6 +30,7 @@ const FB_COLORTYPE FB_SECOND_ENEMY     = 0xff0000;
 const FB_COLORTYPE FB_SECOND_COMPANY   = 0xc866fd;
 //! 我方
 const FB_COLORTYPE FB_SECOND_MYSELF    = 0x00ff00;
+
 
 /*!
 *    \class PPISec
@@ -59,15 +61,15 @@ public slots:
 
     void clearSurface();
 
+    void setRangeWeight(int cont );
+    void setDistantNum(int cont );
     /*
-    void setRangeWeight(int cont );//设置量程范围
-    void setDistantNum(int cont );//设置距离圈
-    void setRadius(int cont);//
+    void setRadius(int cont);
     void setCenter(int cx,int cy);
-
-    int mousePress(QMouseEvent* e);//设置圆心
-    void mouseMove(int cx,int cy);
     */
+
+    bool mousePress(QMouseEvent* e);
+    void mouseMove(int cx,int cy);
 
     /*
     void disableDivert();
@@ -75,21 +77,21 @@ public slots:
     void enableSecondInfo();
     void disableSecondInfo();
     void freezeSecondInfo(int flag);
+    */
     void setSectorRegion(int flag);
     void setWarnSectorRegion(int flag);
-    void sendSectorRegion(sectorRegionInfo *);
-    */
+    //void sendSectorRegion(sectorRegionInfo *);
 
     //void drawHead(int azi);
 signals:
     //void setSectorRegionInfo(unsigned char *);
-    //void showWarnFlag(int flag);
+    void showWarnFlag(int flag);
 
 private:
     QTimer* secTimer;
     PPIPainter * painter;
 
-    PPIDispInfo *dispInfo;
+    //PPIDispInfo *dispInfo;
     int headAzi;
 
     //******************
@@ -97,6 +99,9 @@ private:
     VecTrkIte ite;
     unsigned char sec_track[8];
     //******************
+
+    SectorRegion *pSectorRegion;
+    WarnSectorRegion *pWarnSectorRegion;
 };
 
 #endif

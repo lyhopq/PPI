@@ -18,18 +18,13 @@ public:
     ~PPI();
 
 public:
+    /*
     void setOrigin( int mx, int my );
     //! 得到圆心 x 坐标
     int getXorg() const {return xorg;}
     //! 得到圆心 y 坐标
     int getYorg() const {return yorg;}
     void resetOrigin();
-    //! 设置视频增益
-    void setGain( int g ) { gain = g; }
-    //! 获取视频增益
-    int getGain(){return gain;}
-    //! ??????????
-    void setBase( int b ){ base = b; }
     void setRange( int r );
     //! 获取量程
     int getRange() const {return range;}
@@ -44,20 +39,29 @@ public:
     void disableFirstInfo(){ bFirstInfo = false; }
     //! 一次信息是否显示
     bool isFirstInfo() const { return bFirstInfo; }
+    */
 
+    //! 设置视频增益
+    void setGain( int g ) { gain = g; }
+    //! 获取视频增益
+    int getGain(){return gain;}
+    //! ??????????
+    void setBase( int b ){ base = b; }
     //inline bool isValid( int &x, int &y );
     inline void setFirstPixel(int &x, int &y, VIDEODATATYPE &d);
     void ppiDraw();
     //void extractVideoData( int i );
 
 private:
-    int xorg, yorg;
     int gain;
     int base;
+    /*
+    int xorg, yorg;
     int range;//1:75km 2:150km 3:300km 4:500km
     int rangeweight;
-    //bool bdivert;//偏心
+    bool bdivert;//偏心
     bool bFirstInfo;
+    */
 
     //DataPool *m_dp;
     int ** addr_near_x;

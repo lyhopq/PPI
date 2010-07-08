@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include "ppi.h"
+#include "sysvalue.h"
 
+extern sysValue *sysval;
 
 /*!
 *    \brief 构造函数
@@ -18,16 +20,17 @@ PPI::PPI( DataPool *dp )
     fbp = dp->fbp;
     layer = dp->layer;
 
-    //bdivert = 0;//偏心标志
-
+    /*
+    bdivert = 0;//偏心标志
     xorg = FB_WIDTH/2;//原点x坐标
     yorg = FB_HEIGHT/2;//原点y坐标
-
-    gain = 1;
-    base = 0;//有什么用？？？？？？？？？？？？
     range = 4;//500km
     rangeweight = 20;//500km 20 to 1
     bFirstInfo = 1;
+    */
+
+    gain = 1;
+    base = 0;//有什么用？？？？？？？？？？？？
 }
 
 //! 析构函数
@@ -43,6 +46,7 @@ PPI::~PPI()
 *
 *    设置 PPI 显示的原点
 */
+/*
 void PPI::setOrigin( int x, int y )
 {
     if((x>=0) && (x<FB_WIDTH) && (y>=0) && (y<FB_HEIGHT))
@@ -58,6 +62,8 @@ void PPI::resetOrigin()
     xorg = FB_WIDTH/2;
     yorg = FB_HEIGHT/2;
 }
+*/
+
 
 /*!
 *    \brief 设置量程
@@ -66,6 +72,7 @@ void PPI::resetOrigin()
 *
 *    设置 PPI 显示的量程
 */
+/*
 void PPI::setRange( int r )
 {
     range = r;
@@ -87,6 +94,7 @@ void PPI::setRange( int r )
             break;
     }
 }
+*/
 
 
 /*!
@@ -300,21 +308,21 @@ void PPI::ppiDraw( int azicnt )
     int readytobreak;
     VIDEODATATYPE v;
 
-   if( isFirstInfo() )//是否显示一次
+   if(sysval->isFirstInfo())//是否显示一次
     {
-        /*
-        if( isDivert() )//是否偏心
+        if(sysval->isDivertEnable())//是否偏心
         {
             readytobreak = 0;
             for( int i=0;i<ADDR_NEAR_SMP_LEN;i++ )
             {
-                x = xorg+addr_near_x[azicnt][i];
-                y = yorg-addr_near_y[azicnt][i];
+                x = sysval->getCenterX()+addr_near_x[azicnt][i];
+                y = sysval->getCenterY()-addr_near_y[azicnt][i];
 
-                if( isValid(x,y) )//什么时候等于零？？？？？？？？
+                //if( isValid(x,y) )//什么时候等于零？？？？？？？？
                 {
                     setFirstPixel( x, y, video_data[i] );//画点…………video_data[i]是什么？？？？？？？？？？？？？视频数据缓冲
                 }
+                /*
                 else
                 {
                     //填充死区的地址表不是完全顺序的,一个越界地址的后面可能还有另一个不越界的地址…………？？？？？？？？？？？？？？？
@@ -325,15 +333,17 @@ void PPI::ppiDraw( int azicnt )
                     else
                         readytobreak++;
                 }
+                */
             }
 
+            /*
             readytobreak = 0;
             for( int i=0;i<ADDR_FAR_SMP_LEN;i++ )
             {
-                x = xorg+addr_far_x[2*(azicnt)][i];
-                y = yorg-addr_far_y[2*(azicnt)][i];
+                x = sysval->getCenterX()+addr_far_x[2*(azicnt)][i];
+                y = sysval->getCenterY()-addr_far_y[2*(azicnt)][i];
 
-                if( isValid(x,y) )
+                //if( isValid(x,y) )
                 {
                     setFirstPixel( x, y, video_data[i+ADDR_NEAR_SMP_LEN] );
                 }
@@ -347,10 +357,10 @@ void PPI::ppiDraw( int azicnt )
                         readytobreak++;
                 }
 
-                x = xorg+addr_far_x[2*(azicnt)+1][i];
-                y = yorg-addr_far_y[2*(azicnt)+1][i];
+                x = sysval->getCenterX()+addr_far_x[2*(azicnt)+1][i];
+                y = sysval->getCenterY()-addr_far_y[2*(azicnt)+1][i];
 
-                if( isValid(x,y) )
+                //if( isValid(x,y) )
                 {
                     setFirstPixel( x, y, video_data[i+ADDR_NEAR_SMP_LEN] );
                 }
@@ -364,15 +374,15 @@ void PPI::ppiDraw( int azicnt )
                         readytobreak++;
                 }
             }
+            *******************/
         }
-        */
         //else    // 不偏心只显示近区??????
         {
             //readytobreak = 0;
             for( int i=0;i<ADDR_NEAR_SMP_LEN;i++ )
             {
-                x = xorg+addr_near_x[azicnt][i];
-                y = yorg-addr_near_y[azicnt][i];
+                x = sysval->getCenterX()+addr_near_x[azicnt][i];
+                y = sysval->getCenterY()-addr_near_y[azicnt][i];
 
                 //if( isValid(x,y) )//判断坐标是否有效
                 {

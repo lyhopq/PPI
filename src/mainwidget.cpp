@@ -37,13 +37,16 @@ MainWidget::MainWidget(QWidget *parent) :
     }
     //******************
 
+    bPreDivert = false;
+    //bPreDivert = true;
+
+    // 系统信息
+    sysval  = new sysValue;
+
     frameppi = new FrmPPI(this);
 
     QHBoxLayout *layout = (QHBoxLayout *)this->layout();
     layout->addWidget(frameppi);
-
-    // 系统信息
-    sysval  = new sysValue;
 
     // 数据
     dp      = new DataPool;
@@ -79,6 +82,11 @@ MainWidget::MainWidget(QWidget *parent) :
     secTimer->setSingleShot(false);
     secTimer->start(100); // 1s
     //********************************
+
+
+    connect(frameppi, SIGNAL(mousePress(QMouseEvent*)), this, SLOT(mousePress(QMouseEvent*)));
+    //connect(frameppi, SIGNAL(mouseMove(QMouseEvent*)), this, SLOT(mouseMove(QMouseEvent*)));
+
 }
 
 MainWidget::~MainWidget()
@@ -135,4 +143,88 @@ void MainWidget::toExit()
     ppith->quit();
 
     close();
+}
+
+void MainWidget::mousePress(QMouseEvent* e)
+{
+    int x = e->x();
+    int y = e->y();
+    if(x > FB_WIDTH || y > FB_HEIGHT )
+        return;
+    if(ppisec->mousePress(e))//
+    {
+        //偏心显示,只通过鼠标左键确认
+        //qDebug() << "%%%%%%%%%%%%%%%%%%%%" << e->button() << bPreDivert << "%%%%%%%%%%%%%%%%%";
+        //*************
+        //sysval->display();
+        //*************
+        if(e->button() == Qt::LeftButton && bPreDivert)
+        {
+            qDebug() << "divert!!!!!";
+            //ppi->disableFirstInfo();
+            sysval->setEnFirst(false);
+            fblayer->clearFirst();
+            fblayer->flushWithSecond();
+            //ppi->enableDivert();
+            sysval->setEnadivert(true);
+            //ppi->setOrigin( x, y );
+            sysval->setCenter(x, y);
+            //frameppi->enableDivert();
+            //frameppi->setOrigin( x, y );
+            //ppi->enableFirstInfo();
+            sysval->setEnFirst(true);
+            bPreDivert = false;
+        }
+
+        //************
+        //sysval->display();
+        //************
+    }
+    /*
+    //半自动录取
+    else if(  iAutoTrack==2 && (e->button() == Qt::LeftButton || e->button() == Qt::RightButton))
+    {
+        x = x - dispInfo->centerX;
+        y = dispInfo->centerY - y;
+        double r = sqrt(x*x + y*y);     // P显半径
+        if(r >= dispInfo->radiusPPI)    //超出范围
+            return;
+        r = r * ((double)dispInfo->rangePPI*2.0 / (double)dispInfo->radiusPPI); // 实际半径
+
+        double a = atan2 ((double)x,(double)y)+2*PI*(x<0);  // 方位角(弧度)
+        a = (a/PI)*180.0;   // 转换为度
+        a = a/360.0*4096.0; // 所在扇区(4096个扇区)
+
+        if(e->button() == Qt::LeftButton)   //鼠标左键不输入批号,右键输入批号
+            emit(setAutoTrack(1,(int)a,(int)r));
+        else
+            emit(setAutoTrack(2,(int)a,(int)r));
+    }
+    //手动录取鼠标左键有效
+    else if(  iAutoTrack==3 && (e->button() == Qt::LeftButton))
+    {
+        x = x - dispInfo->centerX;
+        y = dispInfo->centerY - y;
+        double r = sqrt(x*x + y*y);
+        if(r >= dispInfo->radiusPPI)    //超出范围
+            return;
+        r = r * ((double)dispInfo->rangePPI*2.0 / (double)dispInfo->radiusPPI);
+
+        double a = atan2 ((double)x,(double)y)+2*PI*(x<0);
+        a = (a/PI)*180.0;
+        a = a/360.0*4096.0;
+
+        emit(setAutoTrack(3,(int)a,(int)r));
+    }
+    */
+}
+
+void MainWidget::mouseMove( QMouseEvent * e)
+{
+    int x = e->x();
+    int y = e->y();
+    if(x < FB_WIDTH && y < FB_HEIGHT )
+    {
+        ppisec->mouseMove( x, y );
+    }
 }

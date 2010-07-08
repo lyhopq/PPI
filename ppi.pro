@@ -14,7 +14,8 @@ SOURCES += src/mainwidget.cpp \
     src/ppi.cpp \
     src/ppithread.cpp \
     src/track.cpp \
-    src/yh.cpp
+    src/yh.cpp \
+    src/sectorregion.cpp
 HEADERS += src/mainwidget.h \
     src/frmppi.h \
     src/def.h \
@@ -26,7 +27,8 @@ HEADERS += src/mainwidget.h \
     src/ppi.h \
     src/ppithread.h \
     src/track.h \
-    src/yh.h
+    src/yh.h \
+    src/sectorregion.h
 FORMS += ui/mainwidget.ui
 OBJECTS_DIR = tmp
 MOC_DIR = tmp
