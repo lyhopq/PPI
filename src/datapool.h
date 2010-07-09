@@ -13,7 +13,7 @@
 *    \struct s_layer_unit
 *    \brief FrameBuffer 分层结构
 */
-typedef struct s_layer_unit
+struct s_layer_unit
 {
     //! 一次信息
     VIDEODATATYPE nfirst;
@@ -23,7 +23,7 @@ typedef struct s_layer_unit
     bool bsecond;
     //! 是否有屏蔽
     bool bmask;
-}s_layer_unit;
+};
 
 
 /*!

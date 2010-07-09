@@ -459,6 +459,7 @@ void WarnSectorRegion::drawAllSectorRegion()
     int j=0;
     FB_COLORTYPE col = painter->getColor();
     painter->setColor(color);
+    //qDebug() << sectorlist.size();
     //for(psrlist = sectorlist.first();j<sectorlist.size();psrlist = sectorlist.at(++j))
     for(;j<sectorlist.size();++j)
     {

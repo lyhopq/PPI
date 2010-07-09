@@ -104,6 +104,8 @@ FrmPPI::FrmPPI(QWidget *parent)
 
     setFixedSize(FB_WIDTH, FB_HEIGHT);
 
+    warnFlag = false;
+
     QPalette palette;
     palette.setColor(this->backgroundRole(), Qt::black);
 
@@ -171,7 +173,7 @@ void FrmPPI::setWarnFlag(bool flag)
 {
     warnFlag = flag;
     warnCnt = 8;
-    emit setWarnMask(true);
+    //emit setWarnMask(true);
 }
 
 /*!
@@ -209,7 +211,7 @@ void FrmPPI::updateTime()
         {
             warnTitle->setStyleSheet("color: black");
             warnFlag = false;
-            emit setWarnMask(false);
+            //emit setWarnMask(false);
         }
     }
 }

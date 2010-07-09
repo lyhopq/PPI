@@ -668,7 +668,7 @@ void PPIPainter::drawSectorRegion(sectorRegionInfo *p)
     if(start > sysval->getRadius())
         start = sysval->getRadius();
 
-    //qDebug() << diff << "!!!!!!!!!!!!!!!!!!!!!!!";
+    qDebug() << diff << "!!!!!!!!!!!!!!!!!!!!!!!";
     for(i=0;i<diff;i++) // 径
     {
         x = sysval->getCenterX() + chartAddrX[p->degree1][start + i];

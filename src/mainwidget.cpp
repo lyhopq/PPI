@@ -87,6 +87,8 @@ MainWidget::MainWidget(QWidget *parent) :
     connect(frameppi, SIGNAL(mousePress(QMouseEvent*)), this, SLOT(mousePress(QMouseEvent*)));
     connect(frameppi, SIGNAL(mouseMove(QMouseEvent*)), this, SLOT(mouseMove(QMouseEvent*)));
 
+    connect(ppisec, SIGNAL(showWarnFlag(bool)), frameppi, SLOT(setWarnFlag(bool)));
+
 }
 
 MainWidget::~MainWidget()
@@ -138,6 +140,11 @@ void MainWidget::ppiUpdateSec()
 }
 
 
+/*!
+*    \brief 退出
+*
+*    当点击“退出”按钮后，退出程序
+*/
 void MainWidget::toExit()
 {
     ppith->quit();
@@ -145,6 +152,12 @@ void MainWidget::toExit()
     close();
 }
 
+/*!
+*    \brief 鼠标点击事件
+*
+*    \param e    鼠标事件
+*
+*/
 void MainWidget::mousePress(QMouseEvent* e)
 {
     int x = e->x();
@@ -219,6 +232,11 @@ void MainWidget::mousePress(QMouseEvent* e)
     */
 }
 
+/*!
+*    \brief 鼠标移动事件
+*
+*    \param e    鼠标事件
+*/
 void MainWidget::mouseMove( QMouseEvent * e)
 {
     int x = e->x();

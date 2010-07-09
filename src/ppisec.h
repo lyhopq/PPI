@@ -85,7 +85,7 @@ public slots:
     //void drawHead(int azi);
 signals:
     //void setSectorRegionInfo(unsigned char *);
-    void showWarnFlag(int flag);
+    void showWarnFlag(bool);
 
 private:
     QTimer* secTimer;

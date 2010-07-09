@@ -11,7 +11,7 @@
 *
 *    集合了 PPI 的显示参数
 */
-typedef struct PPIDispInfo
+struct PPIDispInfo
 {
     int centerX;                    //坐标中心
     int centerY;
@@ -31,7 +31,7 @@ typedef struct PPIDispInfo
 
 /*
 //BCD码格式
-typedef struct systemBCDTime
+struct systemBCDTime
 {
     unsigned char tv_sec;           //秒
     unsigned char tv_min;           //分
@@ -43,7 +43,7 @@ typedef struct systemBCDTime
     unsigned char tv_yearh;         //年(高)
 };
 
-typedef struct systemTime_struct
+struct systemTime_struct
 {
     unsigned long fs_time;
     unsigned long tv_ms;            //毫秒ms
@@ -57,9 +57,9 @@ typedef struct systemTime_struct
 *
 *    集合了系统参数。包括 PPI 显示信息 \a dispInfo。
 *
-*    \sa PPIDispInfo
+*    \see PPIDispInfo
 */
-typedef struct systemVarDef{
+struct systemVarDef{
     unsigned long fs_time;          // 累积发射时间
     unsigned char shiPinWaChu_flag; //视频挖除标志
     unsigned char shiPinWaChu_num;  //挖区数

@@ -26,7 +26,8 @@ PPISec::PPISec( PPIPainter *p )
     pWarnSectorRegion = new WarnSectorRegion(painter, 1, FB_RED);
 
     //**********************
-    pSectorRegion->setENRegion(true); // 扇区使能
+    //pSectorRegion->setENRegion(true); // 扇区使能
+    pWarnSectorRegion->setENRegion(true); // 警戒使能
     //**********************
 
     //******************************
@@ -85,17 +86,15 @@ void PPISec::draw()
 
     //画扇区
     pSectorRegion->drawAllSectorRegion();
-    //pWarnSectorRegion->drawAllSectorRegion();
+    pWarnSectorRegion->drawAllSectorRegion();
 
     //画二次信息
     if(sysval->isSecondInfo())
         drawAllTrack();
 
-    /*
     //显示告警
     if(pWarnSectorRegion->getWarnFlag())
-        emit(showWarnFlag(1));
-    */
+        emit(showWarnFlag(true));
 }
 
 /*!
@@ -487,22 +486,18 @@ bool PPISec::mousePress(QMouseEvent* e)
 */
 void PPISec::mouseMove(int cx,int cy)
 {
+     int x,y;
+     x= cx - sysval->getCenterX();
+     y= sysval->getCenterY() - cy;
+
      if(pSectorRegion->regionEna)
      {
-        int x,y;
-        x= cx - sysval->getCenterX();
-        y= sysval->getCenterY() - cy;
         pSectorRegion->setMovePoint(x,y);
      }
-     /*
      else if(pWarnSectorRegion->regionEna)
      {
-        int x,y;
-        x= cx - dispInfo->centerX;
-        y= dispInfo->centerY - cy;
         pWarnSectorRegion->setMovePoint(x,y);
      }
-     */
 }
 
 //设置挖区工作方式

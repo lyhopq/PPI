@@ -45,6 +45,8 @@ protected slots:
     void mousePress(QMouseEvent *);
     void mouseMove(QMouseEvent *);
 
+    //void setWarnMask(bool);
+
 private:
     Ui::MainWidget *ui;
 

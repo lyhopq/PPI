@@ -7,7 +7,7 @@
 /*!
 *    \struct sectorRegionInfo
 *
-*    扇区信息结构体
+*    \brief 扇区信息结构体
 */
 struct sectorRegionInfo
 {
