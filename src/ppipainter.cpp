@@ -639,49 +639,75 @@ void PPIPainter::drawPlane(int x,int y,int angle,int batchNum)
 }
 
 
-void PPIPainter::drawSectorRegion(int centerX,int centerY,int r1,int degree1,int r2,int degree2)
+//void PPIPainter::drawSectorRegion(int centerX,int centerY,int r1,int degree1,int r2,int degree2)
+void PPIPainter::drawSectorRegion(sectorRegionInfo *p)
 {
     int **chartAddrX,**chartAddrY;
     chartAddrX = nx; chartAddrY = ny;
     int start,diff,i,x,y;
-    if(r1>r2)
+
+
+    if(p->r1 == p->r2)
+        return;
+
+    if(p->r1 > p->r2)
     {
-        start = r2; // 外径
-        diff = r1-r2; // 间距
+        start = p->r2; // 外径
+        if(p->r1 > sysval->getRadius())  // 内径大于半径
+            return;
+        diff = p->r1 - p->r2; // 间距
     }
     else
     {
-        start = r1;
-        diff = r2-r1;
+        start = p->r1;
+        if(p->r2 > sysval->getRadius())
+            return;
+        diff = p->r2 - p->r1;
     }
+
+    if(start > sysval->getRadius())
+        start = sysval->getRadius();
+
     //qDebug() << diff << "!!!!!!!!!!!!!!!!!!!!!!!";
-    for(i=0;i<diff;i++)
+    for(i=0;i<diff;i++) // 径
     {
-        x = centerX + chartAddrX[degree1][start + i];
-        y = centerY - chartAddrY[degree1][start + i];
+        x = sysval->getCenterX() + chartAddrX[p->degree1][start + i];
+        y = sysval->getCenterY() - chartAddrY[p->degree1][start + i];
         setPixel(x,y,color);
         //qDebug() << "(" << x << y << ")";
         //printf("(%d, %d)\n", x, y);
-        x = centerX + chartAddrX[degree2][start + i];
-        y = centerY - chartAddrY[degree2][start + i];
+        x = sysval->getCenterX() + chartAddrX[p->degree2][start + i];
+        y = sysval->getCenterY() - chartAddrY[p->degree2][start + i];
         setPixel(x,y,color);
     }
-    if(degree1>degree2)
-        diff = (degree2-degree1)+4096;
+
+    if(p->degree1 > p->degree2)
+        diff = (p->degree2 - p->degree1)+4096;
     else
-        diff = degree2-degree1;
-    for(i=0; i<diff;i++)
+        diff = p->degree2 - p->degree1;
+    for(i=0; i<diff;i++) // 弧
     {
-        int degree = (degree1+i)%4096;
-        x = centerX + chartAddrX[degree][r1];
-        y = centerY - chartAddrY[degree][r1];
+        int degree = (p->degree1+i)%4096;
+        x = sysval->getCenterX() + chartAddrX[degree][p->r1];
+        y = sysval->getCenterY() - chartAddrY[degree][p->r1];
         setPixel(x,y,color);
-        x = centerX + chartAddrX[degree][r2];
-        y = centerY - chartAddrY[degree][r2];
+        x = sysval->getCenterX() + chartAddrX[degree][p->r2];
+        y = sysval->getCenterY() - chartAddrY[degree][p->r2];
         setPixel(x,y,color);
+    }
+
+    int px =  nx[p->degree2][start];
+    int py =  ny[p->degree2][start];
+    if(p->flag != 0xFF) // 编号
+    {
+        FB_COLORTYPE c = getColor();
+        setColor(FB_GREEN);
+        drawNum(sysval->getCenterX() + px, sysval->getCenterY() - py,p->id);
+        setColor(c);
     }
 }
 
+/*
 void PPIPainter::drawSectorRegion(int centerX,int centerY,int r1,int degree1,int r2,int degree2,int idNum)
 {
     if(r1 > sysval->getRadius())
@@ -695,7 +721,7 @@ void PPIPainter::drawSectorRegion(int centerX,int centerY,int r1,int degree1,int
 
     int r = r2>r1?r2:r1; // r 外径
 
-    drawSectorRegion(sysval->getCenterX(), sysval->getCenterY(),r1,degree1,r2,degree2);
+    drawSectorRegion(centerX, centerY,r1,degree1,r2,degree2);
 
     if(r>10)
         r-=10;
@@ -703,8 +729,14 @@ void PPIPainter::drawSectorRegion(int centerX,int centerY,int r1,int degree1,int
     int py =  ny[degree2][r];
     //drawNum(sysval->getCenterX() + px, sysval->getCenterY() - py,idNum);
     if(r1 != r2)
+    {
+        FB_COLORTYPE c = getColor();
+        setColor(FB_GREEN);
         drawNum(centerX + px, centerY - py,idNum);
+        setColor(c);
+    }
 }
+*/
 
 /*
 /////////////////////////////////////////////

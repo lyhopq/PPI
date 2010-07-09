@@ -487,14 +487,14 @@ bool PPISec::mousePress(QMouseEvent* e)
 */
 void PPISec::mouseMove(int cx,int cy)
 {
-    /*
      if(pSectorRegion->regionEna)
      {
         int x,y;
-        x= cx - dispInfo->centerX;
-        y= dispInfo->centerY - cy;
+        x= cx - sysval->getCenterX();
+        y= sysval->getCenterY() - cy;
         pSectorRegion->setMovePoint(x,y);
      }
+     /*
      else if(pWarnSectorRegion->regionEna)
      {
         int x,y;

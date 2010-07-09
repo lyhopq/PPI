@@ -4,7 +4,12 @@
 #include <QList>
 #include "def.h"
 
-typedef struct sectorRegionInfo
+/*!
+*    \struct sectorRegionInfo
+*
+*    扇区信息结构体
+*/
+struct sectorRegionInfo
 {
       int id;
       int r1;
@@ -22,6 +27,12 @@ typedef struct sectorRegionInfo
 class PPIPainter;
 class PPISec;
 
+/*!
+*    \class SectorRegion
+*    \brief 扇区
+*
+*    记录扇区，并提供相关操作。如： \a drawAllSectorRegion() 绘制所有扇区， \a clearAllSectorRegion() 清除所有扇区。
+*/
 class SectorRegion
 {
 public:
@@ -45,7 +56,7 @@ public:
      void drawSigleSectorRegion();
      virtual void drawAllSectorRegion();
      virtual void setSectorRegion(int flag);
-     void delSigleSectorRegion(int flag);
+     void delSigleSectorRegion(int id);
 
      //! 扇区是否使能
      bool isEnRegion() const { return regionEna; }
@@ -68,6 +79,12 @@ public:
      FB_COLORTYPE color;
 };
 
+/*!
+*    \class WarnSectorRegion
+*    \brief 警告扇区
+*
+*    绘制警告扇区，并设置警告标志。
+*/
 class WarnSectorRegion:public SectorRegion
 {
 public:

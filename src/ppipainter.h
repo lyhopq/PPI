@@ -3,6 +3,7 @@
 
 #include "def.h"
 #include "datapool.h"
+#include "sectorregion.h"
 
 /*!
 *    \class PPIPainter
@@ -35,8 +36,9 @@ public:
     void getScaleCircle();
     void drawTrackDot(int x,int y);
     void drawPlane(int x,int y,int angle,int batchNum);
-    void drawSectorRegion(int centerX,int centerY,int r1,int degree1,int r2,int degree2);
-    void drawSectorRegion(int centerX,int centerY,int r1,int degree1,int r2,int degree2,int idNum);
+    void drawSectorRegion(sectorRegionInfo *p);
+    //void drawSectorRegion(int centerX,int centerY,int r1,int degree1,int r2,int degree2);
+    //void drawSectorRegion(int centerX,int centerY,int r1,int degree1,int r2,int degree2,int idNum);
     //void getAddrXY(int radius);
 
     void setColor(FB_COLORTYPE col){color = col;}

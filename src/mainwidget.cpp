@@ -85,7 +85,7 @@ MainWidget::MainWidget(QWidget *parent) :
 
 
     connect(frameppi, SIGNAL(mousePress(QMouseEvent*)), this, SLOT(mousePress(QMouseEvent*)));
-    //connect(frameppi, SIGNAL(mouseMove(QMouseEvent*)), this, SLOT(mouseMove(QMouseEvent*)));
+    connect(frameppi, SIGNAL(mouseMove(QMouseEvent*)), this, SLOT(mouseMove(QMouseEvent*)));
 
 }
 

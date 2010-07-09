@@ -8,6 +8,14 @@
 
 extern sysValue *sysval;
 
+/*!
+*    \brief 构造函数
+*
+*    \param p    PPIPainter 指针
+*    \param maxrgnums    最大扇区数
+*    \param col    绘制扇区使用的颜色
+*
+*/
 SectorRegion::SectorRegion(PPIPainter *p, int maxrgnums, FB_COLORTYPE col)
 {
     regionNums = 0;
@@ -46,13 +54,13 @@ void SectorRegion::displayRegion(sectorRegionInfo *p)
     printf("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n");
 }
 
-//获取扇形区域分配的编号
+//! 获取扇形区域分配的编号
 int SectorRegion::getSectorRegionId()
 {
     int flag=0,i=0,j=0;
-    //查找未使用的编号,标号从1到10.
+    //查找未使用的编号,标号从1到 maxSectorRegions.
     //qDebug() << sectorlist.size();
-    for(i=1;i<10;i++)
+    for(i=1;i <= maxSectorRegions;i++)
     {
         flag = 0;
         //for(psrlist = sectorlist.first();j<sectorlist.size();psrlist = sectorlist.at(++j))
@@ -71,7 +79,16 @@ int SectorRegion::getSectorRegionId()
     return(i);
 }
 
-//当鼠标移动时,跟踪鼠标作图
+/*!
+*    \brief 当鼠标移动时,跟踪鼠标作图
+*
+*    \param x1    x 坐标
+*    \param y1    y 坐标
+*
+*    跟踪鼠标绘制扇区，并设置当前扇区第二点信息。
+*
+*    \see setPressPoint()
+*/
 void SectorRegion::setMovePoint(int x1,int y1)
 {
     if(firstflag == true)
@@ -90,12 +107,26 @@ void SectorRegion::setMovePoint(int x1,int y1)
            clearSigleSectorRegion();
            psrlist->r2 = r;
            psrlist->degree2  = (int)degree;
+
            drawSigleSectorRegion();
        }
    }
 }
 
-//当有鼠标按键时,设置或取消扇形区域的点
+/*!
+*    \brief 根据鼠标操作设置扇区
+*
+*    \param flag    鼠标操作类型
+*            - flag = 0    鼠标左键，取消当前扇区
+*            - falg = 1    鼠标右键，确定扇区
+*    \param x1      x 坐标
+*    \param y1      y 坐标
+*
+*    当有鼠标按键时,设置或取消扇形区域的点。若为鼠标左键，确定扇区的第一点或第二点；
+*    若为鼠标右键，取消当前扇区。
+*
+*    \see setMovePoint()
+*/
 void SectorRegion::setPressPoint(int flag,int x1,int y1)
 {
     //qDebug() << flag << x1 << y1 << sectorlist.size() << maxSectorRegions;
@@ -123,8 +154,8 @@ void SectorRegion::setPressPoint(int flag,int x1,int y1)
                 return;
             sectorlist.append(new sectorRegionInfo);
             psrlist = sectorlist.last();
-            //计算角度和半径
 
+            //计算角度和半径
             degree = atan2((double)x1 , (double)y1);
             if(degree < 0)
                 degree = PI + PI + degree;
@@ -135,6 +166,10 @@ void SectorRegion::setPressPoint(int flag,int x1,int y1)
             psrlist->x1  = x1;
             psrlist->y1  = y1;
             psrlist->id = getSectorRegionId();
+            
+            //*************
+            psrlist->flag = 0xFF; // 不画数字的标志
+            //*************
             firstflag = true;
         }
         //第二点，生成一个扇形区域
@@ -143,6 +178,7 @@ void SectorRegion::setPressPoint(int flag,int x1,int y1)
             firstflag = false;
             psrlist = sectorlist.last();
 
+            /*
             r = (int)sqrt(x1*x1 + y1*y1);
             degree = atan2((double)x1 , (double)y1);
             if(degree < 0)
@@ -150,6 +186,7 @@ void SectorRegion::setPressPoint(int flag,int x1,int y1)
             degree = (degree*2048.0) / PI;
             psrlist->r2 = r;
             psrlist->degree2 = degree;
+            */
 
             //统一参数,在r2中保存外径
             if(psrlist->r1 > psrlist->r2)
@@ -174,7 +211,9 @@ void SectorRegion::setPressPoint(int flag,int x1,int y1)
      //****************
 }
 
-//设置当前的工作模式
+/*!
+*    \brief 设置当前的工作模式
+*/
 void SectorRegion::setSectorRegion(int flag)
 {
     //结束挖区工作模式
@@ -222,21 +261,37 @@ void SectorRegion::setCenter(int cx,int cy)
 }
 */
 
-//改变半径
+/*!
+*    \brief 改变半径
+*
+*    \param radius    半径
+*
+*    改变半径时，先清除已经绘制的扇区，再改变所保存的扇区的信息。
+*
+*    \see changeRange()
+*/
 void SectorRegion::changeRadius(int radius)
 {
     int j=0;
     double scale = double(radius) / (double)sysval->getRadius();
- //   clearAllSectorRegion();
+    clearAllSectorRegion();
     for(psrlist = sectorlist.first();j<sectorlist.size();psrlist = sectorlist.at(++j))
     {
         psrlist->r1 = (int)((double)(psrlist->r1) * scale+0.5);
         psrlist->r2 = (int)((double)(psrlist->r2) * scale+0.5);
     }
-    //this->radiusPPI = radius;
+    //sysval->setRadious(radius);
 }
 
-//改变量程
+/*!
+*    \brief 改变量程
+*
+*    \param range    量程
+*
+*    改变量程时，先清除已经绘制的扇区，再改变所保存的扇区的信息。
+*
+*    \see setRadious()
+*/
 void SectorRegion::changeRange(int range)
 {
     int j=0;
@@ -253,13 +308,21 @@ void SectorRegion::changeRange(int range)
 }
 
 
-//删除当前的挖区
-void SectorRegion::delSigleSectorRegion(int flag)
+/*!
+*    \brief 删除挖区
+*
+*    \param id    挖区编号
+*
+*    根据挖区编号删除挖区。
+*/
+void SectorRegion::delSigleSectorRegion(int id)
 {
     int i=0,j=0;
-    for(psrlist = sectorlist.first();j<sectorlist.size();psrlist = sectorlist.at(++j))
+    //for(psrlist = sectorlist.first();j<sectorlist.size();psrlist = sectorlist.at(++j))
+    for(;j<sectorlist.size();++j)
     {
-        if(psrlist->id == flag)
+        psrlist = sectorlist.at(j);
+        if(psrlist->id == id)
         {
             sectorlist.removeAt(i);
             clearSigleSectorRegion(psrlist);
@@ -269,35 +332,45 @@ void SectorRegion::delSigleSectorRegion(int flag)
     }
 }
 
-//清除当前的挖区
+/*!
+*    \brief 清除挖区
+*
+*    \param psrlist    sectorRegionInfo 指针
+*
+*    清除 psrlist 指向的挖区显示。
+*/
 void SectorRegion::clearSigleSectorRegion(sectorRegionInfo *psrlist)
 {
     FB_COLORTYPE col = painter->getColor();
     painter->setColor(FB_CLEAR);
-    painter->drawSectorRegion(sysval->getCenterX(),sysval->getCenterY(),psrlist->r1,psrlist->degree1,psrlist->r2,psrlist->degree2,psrlist->id);
+    //painter->drawSectorRegion(sysval->getCenterX(),sysval->getCenterY(),psrlist->r1,psrlist->degree1,psrlist->r2,psrlist->degree2,psrlist->id);
+    painter->drawSectorRegion(psrlist);
     painter->setColor(col);
 }
 
-//清除当前的挖区
+//! 清除当前的挖区
 void SectorRegion::clearSigleSectorRegion()
 {
     FB_COLORTYPE col = painter->getColor();
     painter->setColor(FB_CLEAR);
     psrlist = sectorlist.last();
-    painter->drawSectorRegion(sysval->getCenterX(),sysval->getCenterY(),psrlist->r1,psrlist->degree1,psrlist->r2,psrlist->degree2,psrlist->id);
+    //painter->drawSectorRegion(sysval->getCenterX(),sysval->getCenterY(),psrlist->r1,psrlist->degree1,psrlist->r2,psrlist->degree2,psrlist->id);
+    painter->drawSectorRegion(psrlist);
     painter->setColor(col);
 }
-//画当前的挖区
+
+//! 画当前的挖区
 void SectorRegion::drawSigleSectorRegion()
 {
     FB_COLORTYPE col = painter->getColor();
     painter->setColor(color);
     psrlist = sectorlist.last();
-    painter->drawSectorRegion(sysval->getCenterX(),sysval->getCenterY(),psrlist->r1,psrlist->degree1,psrlist->r2,psrlist->degree2,psrlist->id);
+    //painter->drawSectorRegion(sysval->getCenterX(),sysval->getCenterY(),psrlist->r1,psrlist->degree1,psrlist->r2,psrlist->degree2,psrlist->id);
+    painter->drawSectorRegion(psrlist);
     painter->setColor(col);
 }
 
-//画所有的挖区
+//! 画所有的挖区
 void SectorRegion::drawAllSectorRegion()
 {
     int j=0;
@@ -308,12 +381,13 @@ void SectorRegion::drawAllSectorRegion()
     for(;j<sectorlist.size(); ++j)
     {
         psrlist = sectorlist.at(j);
-        painter->drawSectorRegion(sysval->getCenterX(),sysval->getCenterY(),psrlist->r1,psrlist->degree1,psrlist->r2,psrlist->degree2,psrlist->id);
+        //painter->drawSectorRegion(sysval->getCenterX(),sysval->getCenterY(),psrlist->r1,psrlist->degree1,psrlist->r2,psrlist->degree2,psrlist->id);
+        painter->drawSectorRegion(psrlist);
     }
     painter->setColor(col);
 }
 
-//清除所有的挖区
+//! 清除所有的挖区
 void SectorRegion::clearAllSectorRegion()
 {
     int j=0;
@@ -321,13 +395,21 @@ void SectorRegion::clearAllSectorRegion()
     painter->setColor(FB_CLEAR);
     for(psrlist = sectorlist.first();j<sectorlist.size();psrlist = sectorlist.at(++j))
     {
-       painter->drawSectorRegion(sysval->getCenterX(),sysval->getCenterY(),psrlist->r1,psrlist->degree1,psrlist->r2,psrlist->degree2,psrlist->id);
+       //painter->drawSectorRegion(sysval->getCenterX(),sysval->getCenterY(),psrlist->r1,psrlist->degree1,psrlist->r2,psrlist->degree2,psrlist->id);
+       painter->drawSectorRegion(psrlist);
     }
     painter->setColor(col);
 }
 
 
 
+/*!
+*    \brief 构造函数
+*
+*    \param p    指向 PPIPainter 指针
+*    \param maxrgnums    最大扇区数
+*    \param col    颜色
+*/
 WarnSectorRegion::WarnSectorRegion(PPIPainter *p,int maxrgnums,FB_COLORTYPE col)
                   : SectorRegion( p, maxrgnums,col )
 {
@@ -335,6 +417,12 @@ WarnSectorRegion::WarnSectorRegion(PPIPainter *p,int maxrgnums,FB_COLORTYPE col)
       regionFlag = 0x00;
 }
 
+/*!
+*    \brief 警告判定
+*
+*    \param x1    x 坐标
+*    \param y1    y 坐标
+*/
 void WarnSectorRegion::warnJudge(int x1,int y1)
 {
     int j=0;
@@ -346,13 +434,15 @@ void WarnSectorRegion::warnJudge(int x1,int y1)
     if(degree < 0)
         degree = PI + PI + degree;
     int dg = (int)((degree*2048.0) / PI);
-    for(psrlist = sectorlist.first();j<sectorlist.size();psrlist = sectorlist.at(++j))
+    //for(psrlist = sectorlist.first();j<sectorlist.size();psrlist = sectorlist.at(++j))
+    for(;j<sectorlist.size();++j)
     {
-        if( ((psrlist->r1 >= r) && (psrlist->r2 <= r)) || (psrlist->r1 <= r) && (psrlist->r2 >=r))
+        psrlist = sectorlist.at(j);
+        if(((psrlist->r1 >= r) && (psrlist->r2 <= r)) || (psrlist->r1 <= r) && (psrlist->r2 >=r))
         {
             int d2 = psrlist->degree2;
             int d1 = psrlist->degree1;
-            if( ((dg>=d1) && (dg<=d2)) || (d2<d1) && ((dg>d1) ||(dg <d2)))
+            if(((dg>=d1) && (dg<=d2)) || (d2<d1) && ((dg>d1) ||(dg <d2)))
             {
                 warnflag = 1;
                 break;
@@ -361,18 +451,32 @@ void WarnSectorRegion::warnJudge(int x1,int y1)
     }
 }
 
+/*!
+*    \brief 绘制警戒扇区
+*/
 void WarnSectorRegion::drawAllSectorRegion()
 {
     int j=0;
     FB_COLORTYPE col = painter->getColor();
     painter->setColor(color);
-    for(psrlist = sectorlist.first();j<sectorlist.size();psrlist = sectorlist.at(++j))
+    //for(psrlist = sectorlist.first();j<sectorlist.size();psrlist = sectorlist.at(++j))
+    for(;j<sectorlist.size();++j)
     {
-       painter->drawSectorRegion(sysval->getCenterX(),sysval->getCenterY(),psrlist->r1,psrlist->degree1,psrlist->r2,psrlist->degree2,psrlist->id);
+        psrlist = sectorlist.at(j);
+        //painter->drawSectorRegion(sysval->getCenterX(),sysval->getCenterY(),psrlist->r1,psrlist->degree1,psrlist->r2,psrlist->degree2,psrlist->id);
+        painter->drawSectorRegion(psrlist);
     }
     painter->setColor(col);
 }
 
+/*!
+*    \brief 使能警戒扇区
+*
+*    \param flag    
+*            - 1 使能警戒
+*            - 0 不使能警戒
+*
+*/
 void WarnSectorRegion::setSectorRegion(int flag)
 {
    if(flag == 0 )
@@ -391,11 +495,16 @@ void WarnSectorRegion::setSectorRegion(int flag)
    }
 }
 
+/*!
+*    \brief 获取警戒标志
+*
+*    \return true 有告警，false 无告警
+*/
 int WarnSectorRegion::getWarnFlag()
 {
     if(warnflag)
     {
-        warnflag = 0;
+        warnflag = false;
         return(1);
     }
     else
